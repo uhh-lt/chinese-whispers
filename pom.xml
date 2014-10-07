@@ -3,7 +3,19 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>de.tudarmstadt.lt</groupId>
 	<artifactId>de.tudarmstadt.lt.chinese-whispers</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.0.1</version>
+	
+	<repositories>
+	    <repository>
+	        <id>johannessimon-mvn-repo</id>
+	        <url>https://raw.github.com/johannessimon/mvn-repo/</url>
+	        <snapshots>
+	            <enabled>true</enabled>
+	            <updatePolicy>always</updatePolicy>
+	        </snapshots>
+	    </repository>
+	</repositories>
+	
 	<dependencies>
 		<dependency>
 			<groupId>commons-io</groupId>
@@ -53,16 +65,13 @@
 					<target>1.6</target>
 				</configuration>
 			</plugin>
+			
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-shade-plugin</artifactId>
 				<version>2.1</version>
 				<executions>
 					<execution>
-						<phase>package</phase>
-						<goals>
-							<goal>shade</goal>
-						</goals>
 						<configuration>
 							<!-- <minimizeJar>true</minimizeJar>-->
 							<filters>
@@ -84,6 +93,18 @@
 					</execution>
 				</executions>
 			</plugin>
+			<plugin>
+				<artifactId>maven-deploy-plugin</artifactId>
+				<version>2.8.1</version>
+				<configuration>
+					<altDeploymentRepository>internal.repo::default::file:///Users/jsimon/git/mvn-repo</altDeploymentRepository>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
+	
+	<properties>
+	    <!-- github server corresponds to entry in ~/.m2/settings.xml -->
+	    <github.global.server>github</github.global.server>
+	</properties>
 </project>

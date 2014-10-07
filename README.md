@@ -9,7 +9,7 @@ You can compile the code using Maven, and run the WSI algorithm from the command
 Here's a quickstart guide:
 ```bash
 git clone https://github.com/johannessimon/chinese-whispers.git
-cd chinese-whispers && mvn package
+cd chinese-whispers && mvn package shade:shade
 java -cp target/chinese-whispers.jar de.tudarmstadt.lt.wsi.WSI
 ```
 
