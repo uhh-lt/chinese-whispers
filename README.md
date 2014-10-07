@@ -2,7 +2,7 @@ This is an implementation of the Chinese Whispers graph clustering algorithm. Fo
 or if you need to reference the algorithm, use this paper:
 http://wortschatz.uni-leipzig.de/~cbiemann/pub/2006/BiemannTextGraph06.pdf
 
-It is specifically used for word sense induction (WSI).
+This project uses the CW algorithm specifically for Word Sense Induction (WSI).
 
 You can compile the code using Maven, and run the WSI algorithm from the command line.
 
