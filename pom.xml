@@ -52,6 +52,11 @@
 			<artifactId>commons-cli</artifactId>
 			<version>1.2</version>
 		</dependency>
+		<dependency>
+			<groupId>de.tudarmstadt.lt</groupId>
+			<artifactId>de.tudarmstadt.lt.util</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
 	</dependencies>
 	<build>
     	<finalName>chinese-whispers</finalName>
@@ -102,9 +107,4 @@
 			</plugin>
 		</plugins>
 	</build>
-	
-	<properties>
-	    <!-- github server corresponds to entry in ~/.m2/settings.xml -->
-	    <github.global.server>github</github.global.server>
-	</properties>
 </project>
