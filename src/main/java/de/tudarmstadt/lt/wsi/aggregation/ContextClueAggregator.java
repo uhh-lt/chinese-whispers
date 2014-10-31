@@ -34,7 +34,7 @@ public class ContextClueAggregator {
 			StringTokenizer columns = new StringTokenizer(line, "\t");
 			String clusterName = columns.nextToken();
 			String node = columns.nextToken();
-			columns.nextToken(); // Skip cluster label
+//			columns.nextToken(); // Skip cluster label
 			StringTokenizer features = new StringTokenizer(columns.nextToken(), "  ");
 			List<Cluster<String>> clusterList = clusters.get(clusterName);
 			finishedClusters.clear();
