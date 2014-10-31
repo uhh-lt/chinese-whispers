@@ -39,14 +39,13 @@ public class ContextClueAggregator {
 				String clusterName = columns.nextToken();
 				String node = columns.nextToken();
 				columns.nextToken(); // Skip word similarity score
-				StringTokenizer features = new StringTokenizer(columns.nextToken(), "  ");
+				String[] features = columns.nextToken().split("  ");
 				List<Cluster<String>> clusterList = clusters.get(clusterName);
 				finishedClusters.clear();
 				if (clusterList != null) {
 					for (Cluster<String> c : clusterList) {
 						if (c.nodes.contains(node)) {
-							while (features.hasMoreTokens()) {
-								String feature = features.nextToken();
+							for (String feature : features) {
 	//							feature = feature.trim();
 								MapUtil.addIntTo(c.featureCounts, feature, 1);
 							}
