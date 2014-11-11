@@ -79,7 +79,12 @@ public class ClusterReaderWriter {
 			Map<N, Integer> clusterFeatureCounts = new HashMap<N, Integer>();
 			if (lineSplits.length >= 5) {
 				String[] clusterFeatures = lineSplits[4].split("  ");
+				final int MAX_NUM_FEATURES = Integer.MAX_VALUE;
+				int i = 0;
 				for (String featureCountPair : clusterFeatures) {
+					if (i >= MAX_NUM_FEATURES) {
+						break;
+					}
 					// TODO: remove isEmpty() check
 					if (!featureCountPair.isEmpty()) {
 						int sepIndex = featureCountPair.lastIndexOf(':');
@@ -87,7 +92,9 @@ public class ClusterReaderWriter {
 							try {
 								N feature = index.getIndex(featureCountPair.substring(0, sepIndex));
 								Integer featureCount = Integer.parseInt(featureCountPair.substring(sepIndex + 1));
-								clusterFeatureCounts.put(feature, featureCount);
+								if (featureCount > 0.1 * clusterNodes.length) {
+									clusterFeatureCounts.put(feature, featureCount);
+								}
 							} catch (NumberFormatException e) {
 								System.err.println("Error (1): malformatted feature-count pair: " + featureCountPair);
 							}
@@ -95,6 +102,7 @@ public class ClusterReaderWriter {
 							System.err.println("Error (2): malformatted feature-count pair: " + featureCountPair);
 						}
 					}
+					i++;
 				}
 			}
 			Cluster<N> c = new Cluster<N>(clusterName, clusterId, clusterLabel, clusterNodeSet, clusterFeatureCounts);
