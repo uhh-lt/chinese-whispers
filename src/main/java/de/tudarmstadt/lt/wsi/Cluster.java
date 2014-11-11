@@ -15,20 +15,20 @@ public class Cluster<N> implements Comparable<Cluster<N>> {
 	public int clusterId;
 	public N label;
 	public Set<N> nodes;
-	public Map<N, Integer> featureCounts;
+	public Map<N, Float> featureScores;
 	public int processedNodes;
 	
 	public Cluster(N name, int clusterId, N label, Set<N> nodes) {
-		this(name, clusterId, label, nodes, new HashMap<N, Integer>());
+		this(name, clusterId, label, nodes, new HashMap<N, Float>());
 	}
 	
-	public Cluster(N name, int clusterId, N label, Set<N> nodes, Map<N, Integer> featureCounts) {
+	public Cluster(N name, int clusterId, N label, Set<N> nodes, Map<N, Float> featureCounts) {
 		this.name = name;
 		this.clusterId = clusterId;
 		this.label = label;
 		this.nodes = nodes;
 		this.processedNodes = 0;
-		this.featureCounts = featureCounts;
+		this.featureScores = featureCounts;
 	}
 	
 	@Override

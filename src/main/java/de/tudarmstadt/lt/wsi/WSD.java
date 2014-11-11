@@ -15,39 +15,49 @@ import de.tudarmstadt.lt.util.MapUtil;
 public class WSD {
 	static Logger log = Logger.getLogger("de.tudarmstadt.lt.wsi");
 	
-	public static <N> Cluster<N> chooseCluster(Collection<Cluster<N>> clusters, Set<N> context, Set<N> contextOverlapOut) {
-		Map<Cluster<N>, Double> senseScores = new TreeMap<Cluster<N>, Double>();
+	public enum ContextClueScoreAggregation {
+		Max,
+		Average,
+		Sum
+	}
+	
+	public static <N> Cluster<N> chooseCluster(Collection<Cluster<N>> clusters, Set<N> context, Set<N> contextOverlapOut, ContextClueScoreAggregation weighting) {
+		Map<Cluster<N>, Float> senseScores = new TreeMap<Cluster<N>, Float>();
 		Map<Cluster<N>, Set<N>> contextOverlaps = new TreeMap<Cluster<N>, Set<N>>();
 		
 		for (Cluster<N> cluster : clusters) {
 			Set<N> contextOverlap = new HashSet<N>();
 			contextOverlaps.put(cluster, contextOverlap);
-			double score = 0.0;
-//			double featureScoreFactor = 1.0 / cluster.nodes.size();
-			for (Entry<N, Integer> feature : cluster.featureCounts.entrySet()) {
+			float score = 0;
+			for (Entry<N, Float> feature : cluster.featureScores.entrySet()) {
 				if (context.contains(feature.getKey())) {
-//					if ((double)feature.getValue() * featureScoreFactor > 0.05) {
-					score += 1.0;//(double)feature.getValue() * featureScoreFactor;
-//					}
 					contextOverlap.add(feature.getKey());
+					switch (weighting) {
+					case Max:
+						score = Math.max(feature.getValue(), score);
+						break;
+					case Sum:
+					case Average:
+						score += feature.getValue();
+						break;
+					}
 				}
 			}
+			if (weighting.equals(ContextClueScoreAggregation.Average)) {
+				score /= cluster.featureScores.size();
+			}
 			if (score > 0) {
-				// since some clusters contain more context clues than others,
-				// normalize the "probability mass" of each cluster by dividing
-				// the matched number of context clues by the overall number
-				// of context clues
-				senseScores.put(cluster, score/* / cluster.featureCounts.size()*/);
+				senseScores.put(cluster, score);
 			}
 		}
 		
-		Map<Cluster<N>, Double> sortedSenseScores = MapUtil.sortMapByValue(senseScores);
+		Map<Cluster<N>, Float> sortedSenseScores = MapUtil.sortMapByValue(senseScores);
 		
 		if (!sortedSenseScores.isEmpty()) {
-			Iterator<Entry<Cluster<N>, Double>> it = sortedSenseScores.entrySet().iterator();
-			Entry<Cluster<N>, Double> first = it.next();
+			Iterator<Entry<Cluster<N>, Float>> it = sortedSenseScores.entrySet().iterator();
+			Entry<Cluster<N>, Float> first = it.next();
 /*			if (it.hasNext()) {
-				Entry<Cluster<N>, Double> second = it.next();
+				Entry<Cluster<N>, Float> second = it.next();
 //				System.out.println(first.getValue() + " vs. " + second.getValue());
 				if (second.getValue().equals(first.getValue())) {
 					return null; // we have a tie

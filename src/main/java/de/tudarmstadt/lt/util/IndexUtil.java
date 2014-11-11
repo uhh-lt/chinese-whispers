@@ -51,10 +51,18 @@ public class IndexUtil {
 		return identityIndexInstance;
 	}
 	
-	public static <A, B> List<A> map(Collection<B> c, Index<A, B> index) {
-		List<A> res = new ArrayList<A>(c.size());
-		for (B a : c) {
-			res.add(index.get(a));
+	public static <A, B> List<A> map(Collection<B> listOfB, Index<A, B> index) {
+		List<A> res = new ArrayList<A>(listOfB.size());
+		for (B b : listOfB) {
+			res.add(index.get(b));
+		}
+		return res;
+	}
+	
+	public static <A, B> List<B> mapToIndices(Collection<A> listOfA, Index<A, B> index) {
+		List<B> res = new ArrayList<B>(listOfA.size());
+		for (A a : listOfA) {
+			res.add(index.getIndex(a));
 		}
 		return res;
 	}
