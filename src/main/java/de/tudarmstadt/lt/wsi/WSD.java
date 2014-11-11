@@ -11,15 +11,32 @@ import org.apache.log4j.Logger;
 public class WSD {
 	static Logger log = Logger.getLogger("de.tudarmstadt.lt.wsi");
 	
-	public static <N> Cluster<N> chooseCluster(Collection<Cluster<N>> clusters, Set<N> context) {
-		Map<Cluster<N>, Integer> senseScores = new TreeMap<Cluster<N>, Integer>();
+	public enum ContextClueScoreAggregation {
+		Max,
+		Average,
+		Sum
+	}
+	
+	public static <N> Cluster<N> chooseCluster(Collection<Cluster<N>> clusters, Set<N> context, ContextClueScoreAggregation weighting) {
+		Map<Cluster<N>, Float> senseScores = new TreeMap<Cluster<N>, Float>();
 		
 		for (Cluster<N> cluster : clusters) {
-			int score = 0;
-			for (Entry<N, Integer> feature : cluster.featureCounts.entrySet()) {
+			float score = 0;
+			for (Entry<N, Float> feature : cluster.featureScores.entrySet()) {
 				if (context.contains(feature.getKey())) {
-					score += feature.getValue();
+					switch (weighting) {
+					case Max:
+						score = Math.max(feature.getValue(), score);
+						break;
+					case Sum:
+					case Average:
+						score += feature.getValue();
+						break;
+					}
 				}
+			}
+			if (weighting.equals(ContextClueScoreAggregation.Average)) {
+				score /= cluster.featureScores.size();
 			}
 			if (score > 0) {
 				senseScores.put(cluster, score);
@@ -27,9 +44,9 @@ public class WSD {
 		}
 		
 		Cluster<N> highestRankedSense = null;
-		int highestScore = -1;
+		float highestScore = 0.0f;
 		for (Cluster<N> sense : senseScores.keySet()) {
-			int score = senseScores.get(sense);
+			float score = senseScores.get(sense);
 			if (score > highestScore) {
 				highestRankedSense = sense;
 				highestScore = score;
