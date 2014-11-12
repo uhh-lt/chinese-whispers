@@ -76,6 +76,7 @@ public class ClusterReaderWriter {
 					clusterNodeSet.add(index.getIndex(clusterNode));
 				}
 			}
+			Map<N, Float> clusterFeatureProbs = new HashMap<N, Float>();
 			Map<N, Float> clusterFeatureScores = new HashMap<N, Float>();
 			if (lineSplits.length >= 5) {
 				String[] clusterFeatures = lineSplits[4].split("  ");
@@ -85,25 +86,38 @@ public class ClusterReaderWriter {
 					if (i >= MAX_NUM_FEATURES) {
 						break;
 					}
+					String[] featureArr = featureScorePair.split(":");
 					// TODO: remove isEmpty() check
-					if (!featureScorePair.isEmpty()) {
-						int sepIndex = featureScorePair.lastIndexOf(':');
-						if (sepIndex >= 0) {
-							try {
-								N feature = index.getIndex(featureScorePair.substring(0, sepIndex));
-								Float featureScore = Float.parseFloat(featureScorePair.substring(sepIndex + 1));
-								clusterFeatureScores.put(feature, featureScore);
-							} catch (NumberFormatException e) {
-								System.err.println("Error (1): malformatted feature-count pair: " + featureScorePair);
-							}
-						} else {
-							System.err.println("Error (2): malformatted feature-count pair: " + featureScorePair);
+					if (featureArr.length == 3) {
+						try {
+							N feature = index.getIndex(featureArr[0]);
+							Float prob = Float.parseFloat(featureArr[1]);
+							Float coverage = Float.parseFloat(featureArr[2]);
+//							if (coverage*prob > 0.00001 && coverage > 0.0001) {
+								clusterFeatureProbs.put(feature, prob);
+								clusterFeatureScores.put(feature, prob*coverage);
+//							}
+						} catch (NumberFormatException e) {
+							System.err.println("Error (1): malformatted feature-count pair: " + featureScorePair);
 						}
+					} else {
+						System.err.println("Error (2): malformatted feature-count pair: " + featureScorePair);
 					}
 					i++;
 				}
 			}
-			Cluster<N> c = new Cluster<N>(clusterName, clusterId, clusterLabel, clusterNodeSet, clusterFeatureScores);
+			List<N> clusterFeaturesSorted = MapUtil.sortMapKeysByValue(clusterFeatureScores);
+			Map<N, Float> clusterFeatureProbsFiltered = new HashMap<N, Float>();
+			int i = 0;
+			int limit = 600;
+			for(N feature : clusterFeaturesSorted) {
+				if (i >= limit) {
+					break;
+				}
+				clusterFeatureProbsFiltered.put(feature, clusterFeatureProbs.get(feature));
+				i++;
+			}
+			Cluster<N> c = new Cluster<N>(clusterName, clusterId, clusterLabel, clusterNodeSet, clusterFeatureProbsFiltered);
 			MapUtil.addTo(clusters, clusterName, c, ArrayList.class);
 		}
 		return clusters;

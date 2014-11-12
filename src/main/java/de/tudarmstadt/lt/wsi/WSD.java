@@ -1,7 +1,7 @@
 package de.tudarmstadt.lt.wsi;
 
 import java.util.Collection;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -21,17 +21,17 @@ public class WSD {
 		Sum
 	}
 	
-	public static <N> Cluster<N> chooseCluster(Collection<Cluster<N>> clusters, Set<N> context, Set<N> contextOverlapOut, ContextClueScoreAggregation weighting) {
+	public static <N> Cluster<N> chooseCluster(Collection<Cluster<N>> clusters, Set<N> context, Map<N, Float> contextOverlapOut, ContextClueScoreAggregation weighting) {
 		Map<Cluster<N>, Float> senseScores = new TreeMap<Cluster<N>, Float>();
-		Map<Cluster<N>, Set<N>> contextOverlaps = new TreeMap<Cluster<N>, Set<N>>();
+		Map<Cluster<N>, Map<N, Float>> contextOverlaps = new TreeMap<Cluster<N>, Map<N, Float>>();
 		
 		for (Cluster<N> cluster : clusters) {
-			Set<N> contextOverlap = new HashSet<N>();
+			Map<N, Float> contextOverlap = new HashMap<N, Float>();
 			contextOverlaps.put(cluster, contextOverlap);
 			float score = 0;
 			for (Entry<N, Float> feature : cluster.featureScores.entrySet()) {
 				if (context.contains(feature.getKey())) {
-					contextOverlap.add(feature.getKey());
+					contextOverlap.put(feature.getKey(), feature.getValue());
 					switch (weighting) {
 					case Max:
 						score = Math.max(feature.getValue(), score);
@@ -63,7 +63,7 @@ public class WSD {
 					return null; // we have a tie
 				}
 			}*/
-			contextOverlapOut.addAll(contextOverlaps.get(first.getKey()));
+			contextOverlapOut.putAll(contextOverlaps.get(first.getKey()));
 			return first.getKey();
 		}
 		
