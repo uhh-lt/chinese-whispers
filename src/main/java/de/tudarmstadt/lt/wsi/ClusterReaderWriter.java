@@ -11,6 +11,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Random;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
@@ -21,6 +22,7 @@ import de.tudarmstadt.lt.util.MapUtil;
 
 public class ClusterReaderWriter {
 	final static Charset UTF_8 = Charset.forName("UTF-8");
+	final static Random r = new Random();
 
 
 	public static void writeClusters(Writer writer, Map<String, List<Cluster<String>>> clusters) throws IOException {
@@ -76,6 +78,7 @@ public class ClusterReaderWriter {
 					clusterNodeSet.add(index.getIndex(clusterNode));
 				}
 			}
+			int m = clusterNodeSet.size();
 			Map<N, Float> clusterFeatureProbs = new HashMap<N, Float>();
 			Map<N, Float> clusterFeatureScores = new HashMap<N, Float>();
 			if (lineSplits.length >= 5) {
@@ -86,17 +89,30 @@ public class ClusterReaderWriter {
 					if (i >= MAX_NUM_FEATURES) {
 						break;
 					}
-					String[] featureArr = featureScorePair.split(":");
+					String[] featureArr = splitNCols(featureScorePair, ":", 8);
+//					String[] featureArr = featureScorePair.split(":");
 					// TODO: remove isEmpty() check
-					if (featureArr.length == 3) {
+					if (featureArr.length == 8) {
 						try {
 							N feature = index.getIndex(featureArr[0]);
-							Float prob = Float.parseFloat(featureArr[1]);
-							Float coverage = Float.parseFloat(featureArr[2]);
-//							if (coverage*prob > 0.00001 && coverage > 0.0001) {
-								clusterFeatureProbs.put(feature, prob);
-								clusterFeatureScores.put(feature, prob*coverage);
-//							}
+//							float lmi = Float.parseFloat(featureArr[1]);
+							float avgProb = Float.parseFloat(featureArr[2]);
+							float avgCov = Float.parseFloat(featureArr[3]);
+							long wc = Long.parseLong(featureArr[4]);
+							long fc = Long.parseLong(featureArr[5]);
+//							long wfc = Long.parseLong(featureArr[6]);
+							float avgWc = (float)wc / m;
+//							float avgWfc = (float)wfc / m;
+							long n = Long.parseLong(featureArr[7]);
+							float normalizedAvgWfc = avgCov * avgWc;
+							float normalizedAvgProb = normalizedAvgWfc / fc;
+//							float normalizedAvgCov = normalizedAvgWfc / fc;
+//							float score = normalizedAvgProb * avgCov;
+							float score = (float)(normalizedAvgWfc * normalizedAvgWfc) / (avgWc * fc);
+							float normalizedLmi = normalizedAvgWfc*(float)(Math.log(n*normalizedAvgWfc) - Math.log(avgWc*fc));
+//							float pmi = normalizedP_AB / (wc * fc);
+							clusterFeatureProbs.put(feature, avgProb);
+							clusterFeatureScores.put(feature, score);
 						} catch (NumberFormatException e) {
 							System.err.println("Error (1): malformatted feature-count pair: " + featureScorePair);
 						}
@@ -107,6 +123,7 @@ public class ClusterReaderWriter {
 				}
 			}
 			List<N> clusterFeaturesSorted = MapUtil.sortMapKeysByValue(clusterFeatureScores);
+			Set<N> clusterFeatures = new HashSet<N>();
 			Map<N, Float> clusterFeatureProbsFiltered = new HashMap<N, Float>();
 			int i = 0;
 			int limit = 600;
@@ -115,12 +132,23 @@ public class ClusterReaderWriter {
 					break;
 				}
 				clusterFeatureProbsFiltered.put(feature, clusterFeatureProbs.get(feature));
+				clusterFeatures.add(feature);
 				i++;
 			}
-			Cluster<N> c = new Cluster<N>(clusterName, clusterId, clusterLabel, clusterNodeSet, clusterFeatureProbsFiltered);
+			Cluster<N> c = new Cluster<N>(clusterName, clusterId, clusterLabel, clusterNodeSet, clusterFeatureProbs, clusterFeaturesSorted, clusterFeatures);
 			MapUtil.addTo(clusters, clusterName, c, ArrayList.class);
 		}
 		return clusters;
+	}
+	
+	static String[] splitNCols(String line, String sep, int n) {
+		String[] _cols = line.split(sep);
+		String[] cols = new String[n];
+		for (int i = 1; i < n; i++) {
+			cols[n-i] = _cols[_cols.length-i];
+		}
+		cols[0] = line.substring(0, line.indexOf(":"));
+		return cols;
 	}
 	
 	public static <N> Map<N, String> readBaselineMapping(Reader in, Index<String, N> index, Set<String> whitelist, Map<N, List<Cluster<N>>> clusters) throws IOException {

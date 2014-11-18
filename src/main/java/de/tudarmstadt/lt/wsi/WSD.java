@@ -1,7 +1,6 @@
 package de.tudarmstadt.lt.wsi;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -17,36 +16,34 @@ public class WSD {
 	
 	public enum ContextClueScoreAggregation {
 		Max,
-		Average,
 		Sum
 	}
 	
+	final static int MAX_FEATURES = 10;
 	public static <N> Cluster<N> chooseCluster(Collection<Cluster<N>> clusters, Set<N> context, Map<N, Float> contextOverlapOut, ContextClueScoreAggregation weighting) {
 		Map<Cluster<N>, Float> senseScores = new TreeMap<Cluster<N>, Float>();
-		Map<Cluster<N>, Map<N, Float>> contextOverlaps = new TreeMap<Cluster<N>, Map<N, Float>>();
-		
+//		Map<Cluster<N>, Map<N, Float>> contextOverlaps = new TreeMap<Cluster<N>, Map<N, Float>>();
 		for (Cluster<N> cluster : clusters) {
-			Map<N, Float> contextOverlap = new HashMap<N, Float>();
-			contextOverlaps.put(cluster, contextOverlap);
-			float score = 0;
-			for (Entry<N, Float> feature : cluster.featureScores.entrySet()) {
-				if (context.contains(feature.getKey())) {
-					contextOverlap.put(feature.getKey(), feature.getValue());
+			senseScores.put(cluster, 0.0f);
+		}
+		
+		for (N feature : context) {
+			for (Cluster<N> cluster : clusters) {
+	//			Map<N, Float> contextOverlap = new HashMap<N, Float>();
+	//			contextOverlaps.put(cluster, contextOverlap);
+				float score = senseScores.get(cluster);
+				if (cluster.features.contains(feature)) {
+					float featureScore = cluster.featureScores.get(feature);
+//					contextOverlap.put(feature, featureScore);
 					switch (weighting) {
 					case Max:
-						score = Math.max(feature.getValue(), score);
+						score = Math.max(featureScore, score);
 						break;
 					case Sum:
-					case Average:
-						score += feature.getValue();
+						score += featureScore;
 						break;
 					}
 				}
-			}
-			if (weighting.equals(ContextClueScoreAggregation.Average)) {
-				score /= cluster.featureScores.size();
-			}
-			if (score > 0) {
 				senseScores.put(cluster, score);
 			}
 		}
@@ -63,8 +60,10 @@ public class WSD {
 					return null; // we have a tie
 				}
 			}*/
-			contextOverlapOut.putAll(contextOverlaps.get(first.getKey()));
-			return first.getKey();
+//			contextOverlapOut.putAll(contextOverlaps.get(first.getKey()));
+			if (first.getValue() > 0.0f) {
+				return first.getKey();
+			}
 		}
 		
 		return null;

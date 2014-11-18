@@ -2,6 +2,7 @@ package de.tudarmstadt.lt.wsi;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -16,19 +17,23 @@ public class Cluster<N> implements Comparable<Cluster<N>> {
 	public N label;
 	public Set<N> nodes;
 	public Map<N, Float> featureScores;
+	public Set<N> features;
+	public List<N> featureRanks;
 	public int processedNodes;
 	
 	public Cluster(N name, int clusterId, N label, Set<N> nodes) {
-		this(name, clusterId, label, nodes, new HashMap<N, Float>());
+		this(name, clusterId, label, nodes, new HashMap<N, Float>(), new ArrayList<N>(), new HashSet<N>());
 	}
 	
-	public Cluster(N name, int clusterId, N label, Set<N> nodes, Map<N, Float> featureCounts) {
+	public Cluster(N name, int clusterId, N label, Set<N> nodes, Map<N, Float> featureScores, List<N> featureRanks, Set<N> features) {
 		this.name = name;
 		this.clusterId = clusterId;
 		this.label = label;
 		this.nodes = nodes;
 		this.processedNodes = 0;
-		this.featureScores = featureCounts;
+		this.featureScores = featureScores;
+		this.featureRanks = featureRanks;
+		this.features = features;
 	}
 	
 	@Override
