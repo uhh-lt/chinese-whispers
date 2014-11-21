@@ -105,11 +105,11 @@ public class ClusterReaderWriter {
 //							float avgWfc = (float)wfc / m;
 							long n = Long.parseLong(featureArr[7]);
 							float normalizedAvgWfc = avgCov * avgWc;
-							float normalizedAvgProb = normalizedAvgWfc / fc;
+//							float normalizedAvgProb = normalizedAvgWfc / fc;
 //							float normalizedAvgCov = normalizedAvgWfc / fc;
 //							float score = normalizedAvgProb * avgCov;
 							float score = (float)(normalizedAvgWfc * normalizedAvgWfc) / (avgWc * fc);
-							float normalizedLmi = normalizedAvgWfc*(float)(Math.log(n*normalizedAvgWfc) - Math.log(avgWc*fc));
+//							float normalizedLmi = normalizedAvgWfc*(float)(Math.log(n*normalizedAvgWfc) - Math.log(avgWc*fc));
 //							float pmi = normalizedP_AB / (wc * fc);
 							float pmi = avgProb * n / (float)wc;
 							if (pmi > 10.0f) {
