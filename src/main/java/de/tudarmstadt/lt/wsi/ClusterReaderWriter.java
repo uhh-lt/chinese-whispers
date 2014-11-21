@@ -111,8 +111,13 @@ public class ClusterReaderWriter {
 							float score = (float)(normalizedAvgWfc * normalizedAvgWfc) / (avgWc * fc);
 							float normalizedLmi = normalizedAvgWfc*(float)(Math.log(n*normalizedAvgWfc) - Math.log(avgWc*fc));
 //							float pmi = normalizedP_AB / (wc * fc);
-							clusterFeatureProbs.put(feature, avgProb);
-							clusterFeatureScores.put(feature, score);
+							float pmi = avgProb * n / (float)wc;
+							if (pmi > 10.0f) {
+								clusterFeatureProbs.put(feature, avgProb);
+								clusterFeatureScores.put(feature, score);
+							} else {
+//								System.out.println("foo");
+							}
 						} catch (NumberFormatException e) {
 							System.err.println("Error (1): malformatted feature-count pair: " + featureScorePair);
 						}
@@ -126,7 +131,7 @@ public class ClusterReaderWriter {
 			Set<N> clusterFeatures = new HashSet<N>();
 			Map<N, Float> clusterFeatureProbsFiltered = new HashMap<N, Float>();
 			int i = 0;
-			int limit = 600;
+			int limit = 10000;
 			for(N feature : clusterFeaturesSorted) {
 				if (i >= limit) {
 					break;
