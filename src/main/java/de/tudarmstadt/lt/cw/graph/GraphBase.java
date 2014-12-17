@@ -26,7 +26,7 @@ public abstract class GraphBase<N, E> implements Graph<N, E> {
 	}
 
 	public void writeDot(Writer writer, Index<?, N> index) throws IOException {
-		writer.write("digraph g {\n");
+		writer.write("strict graph g {\n\toverlap=false;\n\toutputorder=edgesfirst\n\tnode[style=filled,fillcolor=white]\n");
 		Iterator<N> it = iterator();
 		while (it.hasNext()) {
 			N node = it.next();
@@ -35,10 +35,10 @@ public abstract class GraphBase<N, E> implements Graph<N, E> {
 		it = iterator();
 		while (it.hasNext()) {
 			N node = it.next();
-			Iterator<N> neighborIt = getNeighbors(node);
-			while (neighborIt.hasNext()) {
-				N neighbor = neighborIt.next();
-				writer.write("\t" + node + " -> " + neighbor + " [penwidth=0.1];\n");
+			Iterator<Edge<N, E>> edgeIt = getEdges(node);
+			while (edgeIt.hasNext()) {
+				Edge<N, E> edge = edgeIt.next();
+				writer.write("\t" + node + " -- " + edge.target + " [weight=" + (Float)edge.weight / 1000.0 + "];\n");
 			}
 		}
 		writer.write("}\n");

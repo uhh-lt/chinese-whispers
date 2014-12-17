@@ -40,6 +40,7 @@ public class WSI {
 	protected StringIndexGraphWrapper<Float> graphWrapper;
 	protected CW<Integer> cw;
 	protected int maxEdgesPerNode;
+	protected String dotFilesOut;
 	
 	public WSI(StringIndexGraphWrapper<Float> graphWrapper) {
 		this(graphWrapper, Integer.MAX_VALUE);
@@ -55,6 +56,7 @@ public class WSI {
 			cw = new CW<Integer>();
 		}
 		this.maxEdgesPerNode = maxEdgesPerNode;
+		this.dotFilesOut = System.getProperty("wsi.debug.dotfilesout");
 	}
 	
 	public List<Integer> getTransitiveNeighbors(Integer node, int numHops) {
@@ -81,19 +83,22 @@ public class WSI {
 		List<Integer> neighbors = getTransitiveNeighbors(node, 1);
 		Graph<Integer, Float> subgraph = graph.subgraph(neighbors, maxEdgesPerNode);
 		Graph<Integer, Float> undirectedSubgraph = subgraph.undirectedSubgraph(neighbors);
-		/*
-		String nodeName = graphWrapper.get(node);
-		try {
-			Writer graphWriter = FileUtil.createWriter("/Users/jsimon/Desktop/graph-" + nodeName + ".dot");
-			subgraph.writeDot(graphWriter, graphWrapper);
-			graphWriter.close();
-			Writer graphWriter2 = FileUtil.createWriter("/Users/jsimon/Desktop/graph-" + nodeName + "-undirected.dot");
-			undirectedSubgraph.writeDot(graphWriter2, graphWrapper);
-			graphWriter2.close();
-		} catch (Exception e) {
-			e.printStackTrace();
+		
+		if (dotFilesOut != null) {
+			String nodeName = graphWrapper.get(node);
+			try {
+				String nodeNameAlphanumericOnly = nodeName.replaceAll("[^a-zA-Z\\d\\s:]", "");
+				Writer graphWriter = FileUtil.createWriter(dotFilesOut + "/graph-" + nodeNameAlphanumericOnly + ".dot");
+				subgraph.writeDot(graphWriter, graphWrapper);
+				graphWriter.close();
+				Writer graphWriter2 = FileUtil.createWriter(dotFilesOut + "/graph-" + nodeNameAlphanumericOnly + "-undirected.dot");
+				undirectedSubgraph.writeDot(graphWriter2, graphWrapper);
+				graphWriter2.close();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
-		*/
+		
 		return cw.findClusters(undirectedSubgraph);
 	}
 	
