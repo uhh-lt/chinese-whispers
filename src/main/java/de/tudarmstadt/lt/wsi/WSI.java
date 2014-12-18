@@ -62,7 +62,7 @@ public class WSI {
 				cw = new ArrayBackedGraphCW(abg.getArraySize());
 				break;
 			case MarkovChainClustering:
-				cw = new ArrayBackedGraphMCL(0.001f, 2.0f, 1.0f, 0.001f);
+				cw = new ArrayBackedGraphMCL(0, 3.0f, 1.0f, 0.0000000001f);
 			}
 		} else {
 			cw = new CW<Integer>();
@@ -187,7 +187,7 @@ public class WSI {
                 .hasArg()
                 .withDescription("MCL only: maxZero (max. value considered to be zero for pruning)")
                 .create("maxZero"));
-		options.addOption(OptionBuilder.withArgName("string")
+		options.addOption(OptionBuilder.withArgName("cw|mcl")
                 .hasArg()
                 .isRequired()
                 .withDescription("Clustering algorithm to use: \"cw\" or \"mcl\"")

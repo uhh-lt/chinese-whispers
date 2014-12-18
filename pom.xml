@@ -57,11 +57,6 @@
 			<artifactId>de.tudarmstadt.lt.util</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
-		<dependency>
-			<groupId>net.sf.javaml</groupId>
-			<artifactId>javaml</artifactId>
-			<version>0.1.7</version>
-		</dependency>
 	</dependencies>
 	<build>
     	<finalName>chinese-whispers</finalName>

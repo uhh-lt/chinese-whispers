@@ -20,6 +20,8 @@ public interface Graph<N, E> extends Iterable<N>{
 	public Iterator<N> getNeighbors(N node);
 
 	public Iterator<Edge<N, E>> getEdges(N node);
+	
+	public boolean hasNode(N node);
 
 	/**
 	 * Returns a non-modifiable undirected subgraph of this graph.<br>

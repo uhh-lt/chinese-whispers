@@ -90,6 +90,10 @@ public class ArrayBackedGraph<E> extends GraphBase<Integer, E> {
 		}
 	}
 
+	public boolean hasNode(Integer node) {
+		return nodes.get(node);
+	}
+
 	public String getNodeName(Integer node) {
 		return Integer.toString(node);
 	}
