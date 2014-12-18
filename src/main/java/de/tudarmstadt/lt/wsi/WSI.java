@@ -21,7 +21,7 @@ import org.apache.commons.cli.ParseException;
 
 import de.tudarmstadt.lt.cw.CW;
 import de.tudarmstadt.lt.cw.graph.ArrayBackedGraph;
-import de.tudarmstadt.lt.cw.graph.ArrayBackedGraphCW;
+import de.tudarmstadt.lt.cw.graph.ArrayBackedGraphMCL;
 import de.tudarmstadt.lt.cw.graph.Graph;
 import de.tudarmstadt.lt.cw.graph.StringIndexGraphWrapper;
 import de.tudarmstadt.lt.cw.io.GraphReader;
@@ -50,8 +50,9 @@ public class WSI {
 		this.graph = graphWrapper.getGraph();
 		this.graphWrapper = graphWrapper;
 		if (graph instanceof ArrayBackedGraph) {
-			ArrayBackedGraph<Float> abg = (ArrayBackedGraph<Float>)graph;
-			cw = new ArrayBackedGraphCW(abg.getArraySize());
+//			ArrayBackedGraph<Float> abg = (ArrayBackedGraph<Float>)graph;
+//			cw = new ArrayBackedGraphCW(abg.getArraySize());
+			cw = new ArrayBackedGraphMCL();
 		} else {
 			cw = new CW<Integer>();
 		}

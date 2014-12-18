@@ -8,7 +8,7 @@
 	<repositories>
 	    <repository>
 	        <id>johannessimon-mvn-repo</id>
-	        <url>https://raw.github.com/johannessimon/mvn-repo/</url>
+	        <url>https://raw.github.com/johannessimon/mvn-repo/master</url>
 	        <snapshots>
 	            <enabled>true</enabled>
 	            <updatePolicy>always</updatePolicy>
@@ -56,6 +56,11 @@
 			<groupId>de.tudarmstadt.lt</groupId>
 			<artifactId>de.tudarmstadt.lt.util</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>net.sf.javaml</groupId>
+			<artifactId>javaml</artifactId>
+			<version>0.1.7</version>
 		</dependency>
 	</dependencies>
 	<build>

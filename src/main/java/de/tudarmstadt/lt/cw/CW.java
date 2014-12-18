@@ -100,7 +100,7 @@ public class CW<N> {
 		return nodeLabels.get(node);
 	}
 	
-	Map<N, Set<N>> getClusters() {
+	protected Map<N, Set<N>> getClusters() {
 		Map<N, Set<N>> clusters = new HashMap<N, Set<N>>();
 		for (N node : nodes) {
 			N label = getNodeLabel(node);
@@ -112,6 +112,7 @@ public class CW<N> {
 	
 	public Map<N, Set<N>> findClusters(Graph<N, Float> graph) {		
 		init(graph);
+		
 		int numSteps = 0;
 		do {
 			if (numSteps > 100) {
@@ -121,6 +122,7 @@ public class CW<N> {
 			step();
 			numSteps++;
 		} while (changeInPrevStep);
+
 		return getClusters();
 	}
 }
