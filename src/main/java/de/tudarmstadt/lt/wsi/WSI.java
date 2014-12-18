@@ -21,6 +21,7 @@ import org.apache.commons.cli.ParseException;
 
 import de.tudarmstadt.lt.cw.CW;
 import de.tudarmstadt.lt.cw.graph.ArrayBackedGraph;
+import de.tudarmstadt.lt.cw.graph.ArrayBackedGraphCW;
 import de.tudarmstadt.lt.cw.graph.ArrayBackedGraphMCL;
 import de.tudarmstadt.lt.cw.graph.Graph;
 import de.tudarmstadt.lt.cw.graph.StringIndexGraphWrapper;
@@ -42,17 +43,27 @@ public class WSI {
 	protected int maxEdgesPerNode;
 	protected String dotFilesOut;
 	
-	public WSI(StringIndexGraphWrapper<Float> graphWrapper) {
-		this(graphWrapper, Integer.MAX_VALUE);
+	enum ClusteringAlgorithm {
+		ChineseWhispers,
+		MarkovChainClustering
 	}
 	
-	public WSI(StringIndexGraphWrapper<Float> graphWrapper, int maxEdgesPerNode) {
+	public WSI(StringIndexGraphWrapper<Float> graphWrapper, ClusteringAlgorithm algo) {
+		this(graphWrapper, Integer.MAX_VALUE, algo);
+	}
+	
+	public WSI(StringIndexGraphWrapper<Float> graphWrapper, int maxEdgesPerNode, ClusteringAlgorithm algo) {
 		this.graph = graphWrapper.getGraph();
 		this.graphWrapper = graphWrapper;
 		if (graph instanceof ArrayBackedGraph) {
-//			ArrayBackedGraph<Float> abg = (ArrayBackedGraph<Float>)graph;
-//			cw = new ArrayBackedGraphCW(abg.getArraySize());
-			cw = new ArrayBackedGraphMCL();
+			switch (algo) {
+			case ChineseWhispers:
+				ArrayBackedGraph<Float> abg = (ArrayBackedGraph<Float>)graph;
+				cw = new ArrayBackedGraphCW(abg.getArraySize());
+				break;
+			case MarkovChainClustering:
+				cw = new ArrayBackedGraphMCL(0.001f, 2.0f, 1.0f, 0.001f);
+			}
 		} else {
 			cw = new CW<Integer>();
 		}
@@ -160,6 +171,27 @@ public class WSI {
 		                  .hasArg()
                           .withDescription("min. edge weight")
                           .create("e"));
+		options.addOption(OptionBuilder.withArgName("float")
+                .hasArg()
+                .withDescription("MCL only: expansion/inflation exponent")
+                .create("gamma"));
+		options.addOption(OptionBuilder.withArgName("float")
+                .hasArg()
+                .withDescription("MCL only: loopGain (edge weight to add on self-loops, independent of their previous existence)")
+                .create("loopGain"));
+		options.addOption(OptionBuilder.withArgName("float")
+                .hasArg()
+                .withDescription("MCL only: maxResidual (tells MCL when to stop)")
+                .create("maxResidual"));
+		options.addOption(OptionBuilder.withArgName("float")
+                .hasArg()
+                .withDescription("MCL only: maxZero (max. value considered to be zero for pruning)")
+                .create("maxZero"));
+		options.addOption(OptionBuilder.withArgName("string")
+                .hasArg()
+                .isRequired()
+                .withDescription("Clustering algorithm to use: \"cw\" or \"mcl\"")
+                .create("clustering"));
 		options.addOption(OptionBuilder.withArgName("node-list")
                 .hasArg()
                 .withDescription("file with newline-separated list of nodes to cluster")
@@ -187,7 +219,15 @@ public class WSI {
 		int N = Integer.parseInt(cl.getOptionValue("N"));
 		int n = Integer.parseInt(cl.getOptionValue("n"));
 		StringIndexGraphWrapper<Float> graphWrapper = GraphReader.readABCIndexed(inReader, false, N, minEdgeWeight);
-		WSI cwd = new WSI(graphWrapper, n);
+		WSI cwd = null;
+		if (cl.getOptionValue("clustering").toLowerCase().equals("cw")) {
+			cwd = new WSI(graphWrapper, n, ClusteringAlgorithm.ChineseWhispers);
+		} else if (cl.getOptionValue("clustering").toLowerCase().equals("mcl")) {
+			cwd = new WSI(graphWrapper, n, ClusteringAlgorithm.MarkovChainClustering);
+		} else {
+			System.err.println("Unknown clustering algorithm! Must be either \"cw\" or \"mcl\"");
+			return;
+		}
 		System.out.println("Running CW sense clustering...");
 		if (nodes != null) {
 			for (String node : nodes) {

@@ -16,6 +16,18 @@ import de.tudarmstadt.lt.util.IndexUtil.Index;
 public class ArrayBackedGraphMCL extends CW<Integer> {
 	final static MarkovClustering mcl = new MarkovClustering();
 	
+	float maxResidual;
+	float gamma;
+	float loopGain;
+	float maxZero;
+	
+	public ArrayBackedGraphMCL(float maxResidual, float gamma, float loopGain, float maxZero) {
+		this.maxResidual = maxResidual;
+		this.gamma = gamma;
+		this.loopGain = loopGain;
+		this.maxZero = maxZero;
+	}
+	
 	@Override
 	public Map<Integer, Set<Integer>> findClusters(Graph<Integer, Float> graph) {		
 		init(graph);
@@ -32,7 +44,7 @@ public class ArrayBackedGraphMCL extends CW<Integer> {
 				m.set(intNode, intTarget, edge.getWeight());
 			}
 		}
-		SparseMatrix res = mcl.run(m, 0.001, 2.0, 100.0, 0.001);
+		SparseMatrix res = mcl.run(m, maxResidual, gamma, loopGain, maxZero);
 		nodeLabels = new HashMap<Integer, Integer>(graph.getSize());
 		for (Integer node : graph) {
 			int intNode = nodeIndex.getIndex(node);
