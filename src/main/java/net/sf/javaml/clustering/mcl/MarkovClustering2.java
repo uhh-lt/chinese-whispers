@@ -94,7 +94,7 @@ public class MarkovClustering2 {
         int i = 0;
 
         // main iteration
-        while (residual > maxResidual) {
+        while (residual > maxResidual && i < 10000) {
         	System.out.println(i);
             i++;
             a = expand(a);
