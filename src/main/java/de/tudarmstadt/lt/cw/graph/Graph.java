@@ -34,10 +34,21 @@ public interface Graph<N, E> extends Iterable<N>{
 	 * Returns a non-modifiable subgraph of this graph.<br>
 	 * 
 	 * <b>NOTE: The behaviour of this graph when nodes are added or removed is undefined!</b>
+	 * 
+	 * @param maxEdgesPerNode Maximum number of outgoing edges a node is allowed to have in this
+	 *                        subgraph, remaining edges will not be added. Note that this will
+	 *                        <i>not</i> take the top <code>maxEdgesPerNode</code> edges and pick
+	 *                        only those to nodes in the subgraph, but instead will first pick
+	 *                        those edges that point to nodes in the subgraph, and <i>then</i> take
+	 *                        only the top <code>maxEdgePerNode</code> edges of these.
 	 */
 	public Graph<N, E> subgraph(Collection<N> subgraphNodes, int numEdgesPerNode);
 
 	public void writeDot(Writer writer) throws IOException;
 
 	public void writeDot(Writer writer, Index<?, N> index) throws IOException;
+
+	public void writeDotUndirected(Writer writer) throws IOException;
+
+	public void writeDotUndirected(Writer writer, Index<?, N> index) throws IOException;
 }

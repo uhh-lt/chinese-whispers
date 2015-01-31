@@ -43,16 +43,16 @@ public class ArrayBackedGraphCW extends CW<Integer> {
 //		System.out.println("+++ relabel " + node);
 //		System.out.println("BEFORE: " + nodeLabels);
 		Integer oldLabel = nodeLabels[node];
-		ArrayList<Integer> edges = graph.edgeTargets[node];
+		ArrayList<Integer> edges = graph.edgeSources[node];
 		ArrayList<Float> weights = graph.edgeWeights[node];
 		if (edges == null) {
 			return;
 		}
 		labelScores.clear();
 		for (int i = 0; i < edges.size(); i++) {
-			int target = edges.get(i);
+			int source = edges.get(i);
 			float weight = weights.get(i);
-			Integer label = nodeLabels[target];
+			Integer label = nodeLabels[source];
 			labelScores.addTo(label, weight);
 		}
 

@@ -73,10 +73,10 @@ public class StringIndexGraphWrapper<E> extends StringIndex {
 			List<Edge<String, E>> edges = new ArrayList<Edge<String, E>>(intEdges.size());
 			List<Edge<String, E>> edgesOther = new ArrayList<Edge<String, E>>(intEdgesOther.size());
 			for (Edge<Integer, E> edge : intEdges) {
-				edges.add(new Edge<String, E>(get(edge.target), edge.weight));
+				edges.add(new Edge<String, E>(get(edge.source), edge.weight));
 			}
 			for (Edge<Integer, E> edge : intEdgesOther) {
-				edgesOther.add(new Edge<String, E>(otherGraph.get(edge.target), edge.weight));
+				edgesOther.add(new Edge<String, E>(otherGraph.get(edge.source), edge.weight));
 			}
 			if (!edges.containsAll(edgesOther)) {
 				return false;
