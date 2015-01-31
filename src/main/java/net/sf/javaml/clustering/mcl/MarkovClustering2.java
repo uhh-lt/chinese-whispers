@@ -101,7 +101,7 @@ public class MarkovClustering2 {
             residual = inflate(a, pGamma, maxZero);
 //            a.round(2);
         }
-        return a;
+        return a;d
 
     }
 
