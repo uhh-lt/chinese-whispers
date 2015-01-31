@@ -22,8 +22,8 @@ public class ArrayBackedGraph<E> extends GraphBase<Integer, E> {
 	
 	protected int size;
 	BitSet nodes;
-	IntOpenHashSet[] edgeTargetSet;
-	ArrayList<Integer>[] edgeTargets;
+	IntOpenHashSet[] edgeSourceSet;
+	ArrayList<Integer>[] edgeSources;
 	ArrayList<E>[] edgeWeights;
 	protected int initialNumEdgesPerNode;
 	
@@ -31,9 +31,9 @@ public class ArrayBackedGraph<E> extends GraphBase<Integer, E> {
 	public ArrayBackedGraph(int initialSize, int initialNumEdgesPerNode) {
 		this.size = initialSize;
 		nodes = new BitSet(initialSize);
-		edgeTargetSet = new IntOpenHashSet[initialSize];
+		edgeSourceSet = new IntOpenHashSet[initialSize];
 		edgeWeights = new ArrayList[initialSize];
-		edgeTargets = new ArrayList[initialSize];
+		edgeSources = new ArrayList[initialSize];
 		this.initialNumEdgesPerNode = initialNumEdgesPerNode;
 	}
 	
@@ -61,22 +61,22 @@ public class ArrayBackedGraph<E> extends GraphBase<Integer, E> {
 	private void ensureCapacity(int minSize) {
 		if (minSize > size) {
 			int newSize = Math.max(minSize, size * 2);
-			edgeTargetSet = Arrays.copyOf(edgeTargetSet, newSize);
+			edgeSourceSet = Arrays.copyOf(edgeSourceSet, newSize);
 			edgeWeights = Arrays.copyOf(edgeWeights, newSize);
-			edgeTargets = Arrays.copyOf(edgeTargets, newSize);
+			edgeSources = Arrays.copyOf(edgeSources, newSize);
 			size = newSize;
 		}
 	}
 
-	public void addNode(Integer node, ArrayList<Integer> targets, ArrayList<E> weights) {
+	public void addNode(Integer node, ArrayList<Integer> sources, ArrayList<E> weights) {
 		ensureCapacity(node + 1);
 		nodes.set(node);
-		for (int target : targets) {
-			addNode(target);
+		for (int source : sources) {
+			addNode(source);
 		}
-		edgeTargetSet[node] = new IntOpenHashSet(targets.size());
-		edgeTargetSet[node].addAll(targets);
-		edgeTargets[node] = targets;
+		edgeSourceSet[node] = new IntOpenHashSet(sources.size());
+		edgeSourceSet[node].addAll(sources);
+		edgeSources[node] = sources;
 		edgeWeights[node] = weights;
 	}
 
@@ -84,8 +84,8 @@ public class ArrayBackedGraph<E> extends GraphBase<Integer, E> {
 		ensureCapacity(node + 1);
 		if (!nodes.get(node)) {
 			nodes.set(node);
-			edgeTargetSet[node] = new IntOpenHashSet(initialNumEdgesPerNode);
-			edgeTargets[node] = new ArrayList<Integer>(initialNumEdgesPerNode);
+			edgeSourceSet[node] = new IntOpenHashSet(initialNumEdgesPerNode);
+			edgeSources[node] = new ArrayList<Integer>(initialNumEdgesPerNode);
 			edgeWeights[node] = new ArrayList<E>(initialNumEdgesPerNode);
 		}
 	}
@@ -101,12 +101,12 @@ public class ArrayBackedGraph<E> extends GraphBase<Integer, E> {
 	public void addEdgeUndirected(Integer from, Integer to, E weight) {
 		addNode(from);
 		addNode(to);
-		if (edgeTargetSet[from].add(to)) {
-			edgeTargets[from].add(to);
+		if (edgeSourceSet[from].add(to)) {
+			edgeSources[from].add(to);
 			edgeWeights[from].add(weight);
 		}
-		if (edgeTargetSet[to].add(from)) {
-			edgeTargets[to].add(from);
+		if (edgeSourceSet[to].add(from)) {
+			edgeSources[to].add(from);
 			edgeWeights[to].add(weight);
 		}
 	}
@@ -114,37 +114,37 @@ public class ArrayBackedGraph<E> extends GraphBase<Integer, E> {
 	public void addEdge(Integer from, Integer to, E weight) {
 		addNode(from);
 		addNode(to);
-		if (edgeTargetSet[from].add(to)) {
-			edgeTargets[from].add(to);
+		if (edgeSourceSet[from].add(to)) {
+			edgeSources[from].add(to);
 			edgeWeights[from].add(weight);
 		}
 	}
 
 	public Iterator<Integer> getNeighbors(Integer node) {
-		if (edgeTargets[node] == null) {
+		if (edgeSources[node] == null) {
 			return Collections.<Integer>emptyList().iterator();
 		} else {
-			return edgeTargets[node].iterator();
+			return edgeSources[node].iterator();
 		}
 	}
 
 	private class EdgeIterator implements Iterator<Edge<Integer, E>> {
-		private ArrayList<Integer> targets;
+		private ArrayList<Integer> sources;
 		private ArrayList<E> weights;
 		int index = 0;
 		
 		public EdgeIterator(Integer node) {
-			targets = edgeTargets[node];
+			sources = edgeSources[node];
 			weights = edgeWeights[node];
 		}
 
 		public boolean hasNext() {
-			return index < targets.size();
+			return index < sources.size();
 		}
 
 		public Edge<Integer, E> next() {
 			Edge<Integer, E> edge = new Edge<Integer, E>();
-			edge.target = targets.get(index);
+			edge.source = sources.get(index);
 			edge.weight = weights.get(index);
 			index++;
 			return edge;
@@ -156,7 +156,7 @@ public class ArrayBackedGraph<E> extends GraphBase<Integer, E> {
 	}
 
 	public Iterator<Edge<Integer, E>> getEdges(final Integer node) {
-		if (edgeTargets[node] == null) {
+		if (edgeSources[node] == null) {
 			return Collections.<Edge<Integer, E>>emptyList().iterator();
 		} else {
 			return new EdgeIterator(node);
@@ -185,26 +185,26 @@ public class ArrayBackedGraph<E> extends GraphBase<Integer, E> {
 		}
 		
 		for (Integer node : subgraphNodes) {
-			// here, _sg.edgeTargetSet etc. is reset
+			// here, _sg.edgeSourceSet etc. is reset
 			_sg.addNode(node);
-			int numEdges = edgeTargets[node].size();
-			IntOpenHashSet targetSet = _sg.edgeTargetSet[node];
-			ArrayList<Integer> targets = _sg.edgeTargets[node];
+			int numEdges = edgeSources[node].size();
+			IntOpenHashSet sourceSet = _sg.edgeSourceSet[node];
+			ArrayList<Integer> sources = _sg.edgeSources[node];
 			ArrayList<E> weights = _sg.edgeWeights[node];
 			for (int i = 0; i < numEdges; i++) {
-				int target = edgeTargets[node].get(i);
+				int source = edgeSources[node].get(i);
 				E weight = edgeWeights[node].get(i);
-				if (_sgNodes.get(target) && !targetSet.contains(target)) {
-					_sg.addNode(target);
-//					if (targets.size() < maxEdgesPerNode) {
-						targetSet.add(target);
-						targets.add(target);
+				if (_sgNodes.get(source) && !sourceSet.contains(source)) {
+					_sg.addNode(source);
+//					if (sources.size() < maxEdgesPerNode) {
+						sourceSet.add(source);
+						sources.add(source);
 						weights.add(weight);
 //					}
-//					if (_sg.edgeTargets[target].size() < maxEdgesPerNode) {
-						_sg.edgeTargetSet[target].add(node);
-						_sg.edgeTargets[target].add(node);
-						_sg.edgeWeights[target].add(weight);
+//					if (_sg.edgeSources[source].size() < maxEdgesPerNode) {
+						_sg.edgeSourceSet[source].add(node);
+						_sg.edgeSources[source].add(node);
+						_sg.edgeWeights[source].add(weight);
 //					}
 				}
 			}
@@ -233,17 +233,17 @@ public class ArrayBackedGraph<E> extends GraphBase<Integer, E> {
 		
 		for (Integer node : subgraphNodes) {
 			_sg.nodes.set(node);
-			int numEdges = edgeTargets[node].size();
-			ArrayList<Integer> targets = new ArrayList<Integer>(numEdges);
+			int numEdges = edgeSources[node].size();
+			ArrayList<Integer> sources = new ArrayList<Integer>(numEdges);
 			ArrayList<E> weights = new ArrayList<E>(numEdges);
-			for (int i = 0; i < numEdges && targets.size() < maxEdgesPerNode; i++) {
-				int target = edgeTargets[node].get(i);
-				if (_sgNodes.get(target)) {
-					targets.add(target);
+			for (int i = 0; i < numEdges && sources.size() < maxEdgesPerNode; i++) {
+				int source = edgeSources[node].get(i);
+				if (_sgNodes.get(source)) {
+					sources.add(source);
 					weights.add(edgeWeights[node].get(i));
 				}
 			}
-			_sg.edgeTargets[node] = targets;
+			_sg.edgeSources[node] = sources;
 			_sg.edgeWeights[node] = weights;
 		}
 		

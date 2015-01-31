@@ -1,21 +1,21 @@
 package de.tudarmstadt.lt.cw.graph;
 
 public class Edge<N, E> {
-	N target;
+	N source;
 	E weight;
 	
 	public Edge() {
-		target = null;
+		source = null;
 		weight = null;
 	}
 	
 	public Edge(N t, E w) {
-		target = t;
+		source = t;
 		weight = w;
 	}
 	
 	public N getTarget() {
-		return target;
+		return source;
 	}
 	
 	public E getWeight() {
@@ -24,7 +24,7 @@ public class Edge<N, E> {
 	
 	@Override
 	public String toString() {
-		return "Edge(target=" + target.toString() + ", weight=" + weight.toString() + ")";
+		return "Edge(target=" + source.toString() + ", weight=" + weight.toString() + ")";
 	}
 	
 	@SuppressWarnings("rawtypes")
@@ -35,14 +35,14 @@ public class Edge<N, E> {
 		if (obj == null || getClass() != obj.getClass())
 			return false;
 		Edge other = (Edge) obj;
-		return target.equals(other.target) && weight.equals(other.weight);
+		return source.equals(other.source) && weight.equals(other.weight);
 	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((target == null) ? 0 : target.hashCode());
+		result = prime * result + ((source == null) ? 0 : source.hashCode());
 		result = prime * result + ((weight == null) ? 0 : weight.hashCode());
 		return result;
 	}

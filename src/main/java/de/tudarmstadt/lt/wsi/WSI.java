@@ -32,7 +32,8 @@ import de.tudarmstadt.lt.util.MonitoredFileReader;
 import de.tudarmstadt.lt.util.ProgressMonitor;
 
 /**
- * Utility class and command-line interface for Word Sense Induction (WSI) using Chinese Whispers.
+ * Utility class and command-line interface for Word Sense Induction (WSI) using any graph clustering
+ * algorithm (we provide implementations of Chinese Whispers and Markov Chain Clustering).
  * 
  * Run main method without arguments to see list of command line parameters.
  */
@@ -62,7 +63,7 @@ public class WSI {
 				cw = new ArrayBackedGraphCW(abg.getArraySize());
 				break;
 			case MarkovChainClustering:
-				cw = new ArrayBackedGraphMCL(0, 3.0f, 1.0f, 0.0000000001f);
+				cw = new ArrayBackedGraphMCL(0, 2.0f, 1.0f, 0.0000000001f);
 			}
 		} else {
 			cw = new CW<Integer>();
@@ -104,7 +105,7 @@ public class WSI {
 				subgraph.writeDot(graphWriter, graphWrapper);
 				graphWriter.close();
 				Writer graphWriter2 = FileUtil.createWriter(dotFilesOut + "/graph-" + nodeNameAlphanumericOnly + "-undirected.dot");
-				undirectedSubgraph.writeDot(graphWriter2, graphWrapper);
+				undirectedSubgraph.writeDotUndirected(graphWriter2, graphWrapper);
 				graphWriter2.close();
 			} catch (Exception e) {
 				e.printStackTrace();
