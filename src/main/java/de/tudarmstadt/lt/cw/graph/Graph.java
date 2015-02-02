@@ -21,6 +21,8 @@ public interface Graph<N, E> extends Iterable<N>{
 
 	public Iterator<Edge<N, E>> getEdges(N node);
 	
+	public E getEdge(N target, N source);
+	
 	public boolean hasNode(N node);
 
 	/**

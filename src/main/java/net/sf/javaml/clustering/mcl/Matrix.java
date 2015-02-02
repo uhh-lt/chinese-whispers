@@ -22,6 +22,8 @@
  */
 package net.sf.javaml.clustering.mcl;
 
+import java.util.Locale;
+
 
 public class Matrix {
 	float[][] data;
@@ -168,7 +170,7 @@ public class Matrix {
         for (int i = 0; i < size; i++) {
         	sb.append("{");
             for (int j = 0; j < size; j++) {
-            	sb.append(data[i][j]).append("  ");
+            	sb.append(String.format(Locale.ENGLISH, "%.2f", data[i][j])).append("  ");
             }
         	sb.append("}\n");
         }

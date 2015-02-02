@@ -63,7 +63,7 @@ public class CW<N> {
 			if (edge == null) {
 				break;
 			}
-			N label = nodeLabels.get(edge.getTarget());
+			N label = nodeLabels.get(edge.getSource());
 			MapUtil.addFloatTo(labelScores, label, edge.getWeight());
 		}
 		// isEmpty() check in case e.g. node has no neighbors at all

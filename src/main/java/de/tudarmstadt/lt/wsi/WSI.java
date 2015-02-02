@@ -5,6 +5,7 @@ import java.io.Reader;
 import java.io.Writer;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -23,6 +24,7 @@ import de.tudarmstadt.lt.cw.CW;
 import de.tudarmstadt.lt.cw.graph.ArrayBackedGraph;
 import de.tudarmstadt.lt.cw.graph.ArrayBackedGraphCW;
 import de.tudarmstadt.lt.cw.graph.ArrayBackedGraphMCL;
+import de.tudarmstadt.lt.cw.graph.Edge;
 import de.tudarmstadt.lt.cw.graph.Graph;
 import de.tudarmstadt.lt.cw.graph.StringIndexGraphWrapper;
 import de.tudarmstadt.lt.cw.io.GraphReader;
@@ -63,7 +65,7 @@ public class WSI {
 				cw = new ArrayBackedGraphCW(abg.getArraySize());
 				break;
 			case MarkovChainClustering:
-				cw = new ArrayBackedGraphMCL(0, 2.0f, 1.0f, 0.0000000001f);
+				cw = new ArrayBackedGraphMCL(0.00000000001f, 1.45f, 1.0f, 0.0000000001f);
 			}
 		} else {
 			cw = new CW<Integer>();
@@ -118,15 +120,24 @@ public class WSI {
 	public void findSenseClusters(Writer writer, Integer node) throws IOException {
 		Map<Integer, Set<Integer>> clusters = findSenseClusters(node);
 		int senseNr = 0;
+		String nodeName = graphWrapper.get(node);
 		for (Integer label : clusters.keySet()) {
 			Set<Integer> cluster = clusters.get(label);
-			String nodeName = graphWrapper.get(node);
 			String labelName = graphWrapper.get(label);
 			Set<String> clusterNodeNames = new LinkedHashSet<String>();
-			for (Integer clusterNode : cluster) {
-				clusterNodeNames.add(graphWrapper.get(clusterNode));
+			Map<String, Float> clusterNodeWeights = new LinkedHashMap<String, Float>();
+			Iterator<Edge<Integer, Float>> edges = graphWrapper.getGraph().getEdges(node);
+			while (edges.hasNext()) {
+				Edge<Integer, Float> edge = edges.next();
+				Integer neighbor = edge.getSource();
+				if (cluster.contains(neighbor)) {
+					float weight = edge.getWeight();
+					String clusterNodeName = graphWrapper.get(neighbor);
+					clusterNodeNames.add(clusterNodeName);
+					clusterNodeWeights.put(clusterNodeName, weight);
+				}
 			}
-			Cluster<String> c = new Cluster<String>(nodeName, senseNr, labelName, clusterNodeNames);
+			Cluster<String> c = new Cluster<String>(nodeName, senseNr, labelName, clusterNodeWeights);
 			ClusterReaderWriter.writeCluster(writer, c);
 			senseNr++;
 		}

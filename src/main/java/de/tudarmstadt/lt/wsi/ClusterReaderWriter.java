@@ -43,7 +43,13 @@ public class ClusterReaderWriter {
 
 	public static <N> void writeCluster(Writer writer, Cluster<N> cluster, Index<String, N> index) throws IOException {
 		writer.write(cluster.name + "\t" + cluster.clusterId + "\t" + cluster.label + "\t");
-		writer.write(StringUtils.join(IndexUtil.map(cluster.nodes, index), "  "));
+		List<String> clusterNodeStrings = new ArrayList<String>(cluster.nodes.size());
+		for (N node : cluster.nodes) {
+			String clusterName = index.get(node);
+			float weight = cluster.nodeWeights.get(node);
+			clusterNodeStrings.add(clusterName + ":" + weight);
+		}
+		writer.write(StringUtils.join(clusterNodeStrings, "  "));
 		if (!cluster.featureScores.isEmpty()) {
 			writer.write("\t");
 			Map<N, Float> sortedFeatureCounts = MapUtil.sortMapByValue(cluster.featureScores);

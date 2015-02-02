@@ -14,7 +14,7 @@ public class Edge<N, E> {
 		weight = w;
 	}
 	
-	public N getTarget() {
+	public N getSource() {
 		return source;
 	}
 	

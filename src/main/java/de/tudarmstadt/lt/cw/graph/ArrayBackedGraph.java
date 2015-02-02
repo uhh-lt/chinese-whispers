@@ -162,6 +162,17 @@ public class ArrayBackedGraph<E> extends GraphBase<Integer, E> {
 			return new EdgeIterator(node);
 		}
 	}
+	
+	public E getEdge(Integer target, Integer source) {
+		ArrayList<Integer> edges = edgeSources[target];
+		ArrayList<E> weights = edgeWeights[target];
+		for (int i = 0; i < edges.size(); i++) {
+			if (edges.get(i).equals(source)) {
+				return weights.get(i);
+			}
+		}
+		return null;
+	}
 
 	@SuppressWarnings("rawtypes")
 	private ArrayBackedGraph _sg = null;

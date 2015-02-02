@@ -37,8 +37,8 @@ public class ArrayBackedGraphMCL extends CW<Integer> {
 			Iterator<Edge<Integer, Float>> it = graph.getEdges(node);
 			while (it.hasNext()) {
 				Edge<Integer, Float> edge = it.next();
-				if (graph.hasNode(edge.getTarget())) {
-					int intTarget = nodeIndex.getIndex(edge.getTarget());
+				if (graph.hasNode(edge.getSource())) {
+					int intTarget = nodeIndex.getIndex(edge.getSource());
 					m.set(intNode, intTarget, edge.getWeight());
 				} else {
 					System.err.println("fool!");
