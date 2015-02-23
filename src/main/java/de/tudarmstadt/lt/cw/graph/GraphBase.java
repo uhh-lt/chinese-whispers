@@ -74,7 +74,7 @@ public abstract class GraphBase<N, E> implements Graph<N, E> {
 				if (!edges.contains(entryEdge)) {
 					edges.add(new SimpleEntry<N, N>(node, edge.source));
 					edges.add(new SimpleEntry<N, N>(edge.source, node));
-					String weight = String.format(Locale.US, "%.5f", (Float)edge.weight / 1000.0);
+					String weight = String.format(Locale.US, "%.5f", (Float)edge.weight);
 					writer.write("\t" + edge.source + " -- " + node + " [weight=" + weight + "];\n");
 				}
 			}

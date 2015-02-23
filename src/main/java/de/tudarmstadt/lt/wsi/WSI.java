@@ -65,7 +65,7 @@ public class WSI {
 				cw = new ArrayBackedGraphCW(abg.getArraySize());
 				break;
 			case MarkovChainClustering:
-				cw = new ArrayBackedGraphMCL(0.00000000001f, 1.45f, 1.0f, 0.0000000001f);
+				cw = new ArrayBackedGraphMCL(0.00000000001f, 1.4f, 0.0f, 0.0000000001f);
 			}
 		} else {
 			cw = new CW<Integer>();
