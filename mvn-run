@@ -5,4 +5,4 @@ shift # remove first argument (name of main class) from $@
 mvn -DskipTests compile package dependency:build-classpath -Dmdep.outputFile=".dependency-jars" &&
 JAVA_CLASSPATH=$JAVA_CLASSPATH:`cat .dependency-jars` &&
 JAVA_CLASSPATH=$JAVA_CLASSPATH:`echo target/*.jar | tr " " ":"` &&
-java -cp $JAVA_CLASSPATH $MAIN_CLASS $@
+java -Xms8G -Xmx8G -cp $JAVA_CLASSPATH $MAIN_CLASS $@
