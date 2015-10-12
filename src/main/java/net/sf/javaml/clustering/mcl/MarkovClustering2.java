@@ -95,11 +95,10 @@ public class MarkovClustering2 {
 
         // main iteration
         while (residual > maxResidual && i < 10000) {
-        	System.out.println(i);
             i++;
             a = expand(a);
             residual = inflate(a, pGamma, maxZero);
-//            a.round(2);
+            //a.round(2);
         }
         return a;
 

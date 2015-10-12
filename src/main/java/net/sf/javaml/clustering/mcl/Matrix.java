@@ -78,18 +78,20 @@ public class Matrix {
      * @return vector of old row sums
      */
     public void normalise(float rowsum) {
-//        SparseVector sums = new SparseVector();
         for (int i = 0; i < size; i++) {
             double sum = 0;
             for (int j = 0; j < size; j++) {
             	sum += data[i][j];
             }
-            double invsum = rowsum / sum;
+            double invsum = 0.0;
+            if (sum > 0){
+                invsum = rowsum / sum;
+            }
+
             for (int j = 0; j < size; j++) {
             	data[i][j] *= invsum;
             }
         }
-//        return sums;
     }
 
     /**

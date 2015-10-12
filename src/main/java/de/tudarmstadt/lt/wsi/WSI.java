@@ -216,7 +216,7 @@ public class WSI {
 		} catch (ParseException e) {
 			System.out.println(e.getMessage());
 		}
-		
+
 		if (!success) {
 			HelpFormatter formatter = new HelpFormatter();
 			formatter.printHelp("CWD", options, true);
@@ -230,6 +230,8 @@ public class WSI {
 		float minEdgeWeight = cl.hasOption("e") ? Float.parseFloat(cl.getOptionValue("e")) : 0.0f;
 		int N = Integer.parseInt(cl.getOptionValue("N"));
 		int n = Integer.parseInt(cl.getOptionValue("n"));
+
+
 		StringIndexGraphWrapper<Float> graphWrapper = GraphReader.readABCIndexed(inReader, false, N, minEdgeWeight);
 		WSI cwd = null;
 		if (cl.getOptionValue("clustering").toLowerCase().equals("cw")) {
@@ -240,6 +242,7 @@ public class WSI {
 			System.err.println("Unknown clustering algorithm! Must be either \"cw\" or \"mcl\"");
 			return;
 		}
+
 		System.out.println("Running CW sense clustering...");
 		if (nodes != null) {
 			for (String node : nodes) {

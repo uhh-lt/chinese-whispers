@@ -29,7 +29,7 @@ public class ArrayBackedGraphMCL extends CW<Integer> {
 	@Override
 	public Map<Integer, Set<Integer>> findClusters(Graph<Integer, Float> graph) {		
 		init(graph);
-		
+
 		Matrix m = new Matrix(graph.getSize());
 		Index<Integer, Integer> nodeIndex = new GenericIndex<Integer>();
 		for (Integer node : graph) {
@@ -47,15 +47,24 @@ public class ArrayBackedGraphMCL extends CW<Integer> {
 		}
 		Matrix res = mcl.run(m, maxResidual, gamma, loopGain, maxZero);
 		nodeLabels = new HashMap<Integer, Integer>(graph.getSize());
+        System.out.println("=========================");
 		for (Integer node : graph) {
 			int intNode = nodeIndex.getIndex(node);
-			for (int target = 0; target < res.size(); target++) {
-				if (res.get(intNode, target) > 0.1) {
-					nodeLabels.put(node, nodeIndex.get(target));
-					break;
-				}
+			double max = 0.0;
+            for (int target = 0; target < res.size(); target++) {
+
+                // find target with max
+                if (res.get(intNode, target) > max) max = res.get(intNode, target);
+
+                if (res.get(intNode, target) > 0.1) {
+                    nodeLabels.put(node, nodeIndex.get(target));
+                    break;
+                }
 			}
+            System.out.print(max + " ");
 		}
+        System.out.println("");
+
 		return getClusters();
 	}
 }
