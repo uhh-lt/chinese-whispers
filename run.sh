@@ -16,8 +16,8 @@ JAVA_CLASSPATH=$JAVA_CLASSPATH:`cat .dependency-jars` &&
 JAVA_CLASSPATH=$JAVA_CLASSPATH:`echo target/*.jar | tr " " ":"` &&
 
 for method in cw mcl ; do
-    for N in 20 50 100 200; do
-        for n in 5 10 20 50 100 200 ; do
+    for N in 20 50 100 200 500; do
+        for n in 5 10 20 50 100 200 500 ; do
             echo "$input-$method-e$e-N$N-n$n.csv" 
             java -Xms8G -Xmx8G -cp $JAVA_CLASSPATH  de.tudarmstadt.lt.wsi.WSI \
                 -clustering $method \
