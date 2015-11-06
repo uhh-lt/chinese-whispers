@@ -13,8 +13,8 @@ from collections import defaultdict
 from numpy import std, mean, median
 
 
-HEADER_IN = "word\tcid\tkeyword\tclusters"
-HEADER_OUT = "word\tcid\tclusters\tisas"
+HEADER_IN = "word\tcid\tkeyword\tcluster"
+HEADER_OUT = "word\tcid\tcluster\tisas"
 CHUNK_LINES = 500000
 
 
@@ -35,6 +35,12 @@ def exists(dir_path):
 
 
 def postprocess(ddt_fpath, output_fpath, filtered_fpath, min_size):
+    print "Input DDT:", ddt_fpath
+    print "Output DDT:", output_fpath
+    print "Filtered out DDT clusters:", filtered_fpath
+    print "Min size:", min_size
+
+    min_size = int(min_size)
     ddt_tmp_fpath = ddt_fpath + ".tmp"
     copyfile(ddt_fpath, ddt_tmp_fpath)
     add_header(ddt_tmp_fpath, HEADER_IN)
@@ -56,15 +62,15 @@ def postprocess(ddt_fpath, output_fpath, filtered_fpath, min_size):
                 num += 1
                 
                 # filters
-                clusters = row.clusters.split("  ")
-                if len(clusters) < min_size:
-                    filtered.write("%s\t%d\t%s\n" % (row.word, row.cid, ",".join(clusters)))
+                cluster = row.cluster.split("  ")
+                if len(cluster) < min_size:
+                    filtered.write("%s\t%d\t%s\n" % (row.word, row.cid, ",".join(cluster)))
                     continue
-                output.write("%s\t%d\t%s\t\n" % (row.word, row.cid, ",".join(clusters)))
+                output.write("%s\t%d\t%s\t\n" % (row.word, row.cid, ",".join(cluster)))
                 selected_num += 1
                 senses_num[row.word] += 1
 
-        print "# output clusters:", selected_num, "of", num
+        print "# output clusters: %d of %d (%.2f %%)" % (selected_num, num, float(selected_num)/num*100.)
         values = senses_num.values()
         print "average number of senses: %.2f +- %.3f, median: %.3f" % (mean(values), std(values), median(values))
     try_remove(ddt_tmp_fpath)
@@ -79,12 +85,7 @@ def main():
     output_fpath = splitext(args.ddt)[0] + "-minsize" + args.min_size + ".csv"
     filtered_fpath = splitext(args.ddt)[0] + "-minsize" + args.min_size + "-filtered.csv"
 
-    print "Input DDT:", args.ddt
-    print "Output DDT:", output_fpath
-    print "Filtered out DDT clusters:", filtered_fpath
-    print "Min size:", args.min_size
-
-    postprocess(args.ddt, output_fpath, filtered_fpath, int(args.min_size))
+    postprocess(args.ddt, output_fpath, filtered_fpath, args.min_size)
 
 if __name__ == '__main__':
     main()
