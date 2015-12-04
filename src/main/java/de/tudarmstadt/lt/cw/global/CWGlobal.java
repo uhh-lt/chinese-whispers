@@ -61,6 +61,11 @@ public class CWGlobal {
 		BufferedWriter writer = FileUtil.createWriter(outFile);
 		float minEdgeWeight = cl.hasOption("e") ? Float.parseFloat(cl.getOptionValue("e")) : 0.0f;
 		int N = Integer.parseInt(cl.getOptionValue("N"));
+		findAndWriteClusters(inReader, writer, minEdgeWeight, N);
+	}
+
+	protected static void findAndWriteClusters(Reader inReader, BufferedWriter writer, float minEdgeWeight, int N)
+			throws IOException {
 		StringIndexGraphWrapper<Float> graphWrapper = GraphReader.readABCIndexed(inReader, false, N, minEdgeWeight);
 		System.out.println("Running CW sense clustering...");
 		CW<Integer> cw = new CW<Integer>();
@@ -73,9 +78,6 @@ public class CWGlobal {
 			int size = cluster.getValue().size();
 			writer.write(String.valueOf(size));
 			writer.write("\t");
-			String label = graphWrapper.get(cluster.getKey());
-			writer.write(label);
-			writer.write(", ");
 			for (Integer index : cluster.getValue()) {
 				String label2 = graphWrapper.get(index);
 				writer.write(label2);
