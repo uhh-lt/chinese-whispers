@@ -43,3 +43,9 @@ The output (in our case test-output.txt) is then formatted as follows:
     word <TAB> cluster-id <TAB> cluster-label <TAB> cluster-node1 cluster-node2 ...
     ...
 ```
+
+In addition, a default implementation of chinese-whispers for global clustering is available:
+```
+java -Xms4G -Xmx4G -cp target/chinese-whispers.jar de.tudarmstadt.lt.cw.global.CWGlobal -in /path/to/edges.gz -N 1000 -out clusters.csv.gz
+```
+N limits how many edges are maximum added per node when building the graph

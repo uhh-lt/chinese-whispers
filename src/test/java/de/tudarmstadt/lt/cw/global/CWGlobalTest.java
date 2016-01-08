@@ -9,10 +9,13 @@ import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.util.Random;
 
 import org.junit.Test;
 
 public class CWGlobalTest {
+
+	private Random random = new Random(42);
 
 	@Test
 	public void testMinimal() throws IOException {
@@ -21,7 +24,7 @@ public class CWGlobalTest {
 		float minEdgeWeight = 0.0f;
 		int N = 200;
 
-		CWGlobal.findAndWriteClusters(reader, new BufferedWriter(writer), minEdgeWeight, N);
+		CWGlobal.findAndWriteClusters(reader, new BufferedWriter(writer), minEdgeWeight, N, random);
 		String result = writer.toString();
 
 		assertThat(numberOfClusters(result), is(1));
@@ -36,12 +39,33 @@ public class CWGlobalTest {
 		float minEdgeWeight = 0.0f;
 		int N = 200;
 
-		CWGlobal.findAndWriteClusters(reader, new BufferedWriter(writer), minEdgeWeight, N);
+		CWGlobal.findAndWriteClusters(reader, new BufferedWriter(writer), minEdgeWeight, N, random);
 		String result = writer.toString();
 
 		assertThat(numberOfClusters(result), is(2));
 		assertTrue(containsCluster(clusters(result), "b, a, c, "));
 		assertTrue(containsCluster(clusters(result), "f, e, "));
+	}
+
+	@Test
+	public void testMultipleCallsSameResult() throws IOException {
+		// a-b-c-d
+		Reader reader = new StringReader(sim("a", "b", 1) + sim("b", "a", 1) + sim("b", "c", 1) + sim("c", "b", 1)
+				+ sim("c", "d", 1) + sim("d", "c", 1));
+		float minEdgeWeight = 0.0f;
+		int N = 200;
+
+		StringWriter writer1 = new StringWriter();
+		CWGlobal.findAndWriteClusters(reader, new BufferedWriter(writer1), minEdgeWeight, N, random);
+		String result1 = writer1.toString();
+
+		reader.reset();
+
+		StringWriter writer2 = new StringWriter();
+		CWGlobal.findAndWriteClusters(reader, new BufferedWriter(writer2), minEdgeWeight, N, random);
+		String result2 = writer2.toString();
+
+		assertThat(result1, is(result2));
 	}
 
 	private static String sim(String a, String b, double similarity) {
