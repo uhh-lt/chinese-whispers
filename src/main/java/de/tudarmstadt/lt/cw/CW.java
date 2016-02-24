@@ -1,4 +1,5 @@
 package de.tudarmstadt.lt.cw;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -7,6 +8,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Random;
 import java.util.Set;
 
 import de.tudarmstadt.lt.cw.graph.Edge;
@@ -31,33 +33,43 @@ public class CW<N> {
 	protected Map<N, N> nodeLabels;
 	protected boolean changeInPrevStep;
 	protected Map<N, Float> labelScores = new HashMap<N, Float>();
-	
+	private Random random;
+
+	public CW() {
+		this(new Random());
+	}
+
+	public CW(Random r) {
+		this.random = r;
+	}
+
 	protected void init(Graph<N, Float> graph) {
 		this.graph = graph;
-		// ArrayList provides linear time random access (used for shuffle in step())
+		// ArrayList provides linear time random access (used for shuffle in
+		// step())
 		this.nodes = new ArrayList<N>();
 
 		Iterator<N> nodeIt = graph.iterator();
 		while (nodeIt.hasNext()) {
 			this.nodes.add(nodeIt.next());
 		}
-		
+
 		nodeLabels = new HashMap<N, N>();
 		for (N node : nodes) {
 			nodeLabels.put(node, node);
 		}
 	}
-	
+
 	protected void relabelNode(N node) {
 		labelScores.clear();
 		N oldLabel = nodeLabels.get(node);
 		Iterator<Edge<N, Float>> edgeIt = graph.getEdges(node);
-		
+
 		// There's nothing to do if there's no neighbors
 		if (!edgeIt.hasNext()) {
 			return;
 		}
-		
+
 		while (edgeIt.hasNext()) {
 			Edge<N, Float> edge = edgeIt.next();
 			if (edge == null) {
@@ -76,7 +88,7 @@ public class CW<N> {
 			}
 		}
 	}
-	
+
 	protected N getKeyWithMaxValue(Map<N, Float> map) {
 		N maxKey = null;
 		Float maxVal = -Float.MAX_VALUE;
@@ -88,18 +100,18 @@ public class CW<N> {
 		}
 		return maxKey;
 	}
-	
+
 	protected void step() {
-		Collections.shuffle(nodes);
+		Collections.shuffle(nodes, random);
 		for (N node : nodes) {
 			relabelNode(node);
 		}
 	}
-	
+
 	protected N getNodeLabel(N node) {
 		return nodeLabels.get(node);
 	}
-	
+
 	protected Map<N, Set<N>> getClusters() {
 		Map<N, Set<N>> clusters = new HashMap<N, Set<N>>();
 		for (N node : nodes) {
@@ -109,10 +121,10 @@ public class CW<N> {
 		}
 		return clusters;
 	}
-	
-	public Map<N, Set<N>> findClusters(Graph<N, Float> graph) {		
+
+	public Map<N, Set<N>> findClusters(Graph<N, Float> graph) {
 		init(graph);
-		
+
 		int numSteps = 0;
 		do {
 			if (numSteps > 100) {

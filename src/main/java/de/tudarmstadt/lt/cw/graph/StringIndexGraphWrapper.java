@@ -44,9 +44,20 @@ public class StringIndexGraphWrapper<E> extends StringIndex {
 	}
 	
 	public void addEdge(String from, String to, E weight) {
+		addEdge(from, to, weight, false);
+	}
+
+	public void addEdge(String from, String to, E weight, boolean undirected) {
 		Integer fromIndex = getIndex(from);
 		Integer toIndex = getIndex(to);
 		base.addEdge(fromIndex, toIndex, weight);
+
+		if (undirected) {
+			base.addEdgeUndirected(toIndex, fromIndex, weight);
+		} else {
+			base.addEdge(fromIndex, toIndex, weight);
+		}
+
 	}
 
 	@SuppressWarnings("unchecked")
