@@ -17,6 +17,7 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
 import de.tudarmstadt.lt.cw.CW;
+import de.tudarmstadt.lt.cw.CW.Option;
 import de.tudarmstadt.lt.cw.graph.Graph;
 import de.tudarmstadt.lt.cw.graph.StringIndexGraphWrapper;
 import de.tudarmstadt.lt.cw.io.GraphReader;
@@ -47,6 +48,9 @@ public class CWGlobal {
 				.withDescription(
 						"max. number of similar words to process for a given word (size of word subgraph to be clustered)")
 				.isRequired().create("N"));
+		options.addOption(OptionBuilder.withArgName("cwOption").hasArg()
+				.withDescription("CW weighting option:  \"TOP\"(default), \"DIST_LOG\", \"DIST_NOLOG\"")
+				.create("cwOption"));
 		CommandLine cl = null;
 		try {
 			cl = clParser.parse(options, args);
@@ -62,11 +66,20 @@ public class CWGlobal {
 		BufferedWriter writer = FileUtil.createWriter(outFile);
 		float minEdgeWeight = cl.hasOption("e") ? Float.parseFloat(cl.getOptionValue("e")) : 0.0f;
 		int N = Integer.parseInt(cl.getOptionValue("N"));
-		findAndWriteClusters(inReader, writer, minEdgeWeight, N, new Random());
+		String cwOption = cl.getOptionValue("cwOption");
+		CW.Option option;
+		if ("DIST_LOG".equals(cwOption)) {
+			option = Option.DIST_LOG;
+		} else if ("DIST_NOLOG".equals(cwOption)) {
+			option = Option.DIST_NOLOG;
+		} else {
+			option = Option.TOP;
+		}
+		findAndWriteClusters(inReader, writer, minEdgeWeight, N, new Random(), option);
 	}
 
 	protected static void findAndWriteClusters(Reader inReader, BufferedWriter writer, float minEdgeWeight, int N,
-			Random random) throws IOException {
+			Random random, Option option) throws IOException {
 		StringIndexGraphWrapper<Float> graphWrapper = GraphReader.readABCIndexed(inReader, false, N, minEdgeWeight);
 		System.out.println("Running CW sense clustering...");
 		CW<Integer> cw = new CW<Integer>(random);
