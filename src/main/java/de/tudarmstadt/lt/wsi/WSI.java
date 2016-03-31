@@ -226,8 +226,11 @@ public class WSI {
 				option = Option.DIST_LOG;
 			} else if ("DIST_NOLOG".equals(cwOption)) {
 				option = Option.DIST_NOLOG;
-			} else {
+			} else if ("TOP".equals(cwOption)) {
 				option = Option.TOP;
+			} else {
+				System.err.println("Unknown cw option! Must be either \"TOP\", \"DIST_LOG\" or \"DIST_NOLOG\"");
+				return;
 			}
 			cwd.cw.setOption(option);
 		} else if (cl.getOptionValue("clustering").toLowerCase().equals("mcl")) {

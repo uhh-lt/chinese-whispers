@@ -62,7 +62,6 @@ public class CWGlobal {
 		}
 		String inFile = cl.getOptionValue("in");
 		String outFile = cl.getOptionValue("out");
-		Reader inReader = new MonitoredFileReader(inFile);
 		BufferedWriter writer = FileUtil.createWriter(outFile);
 		float minEdgeWeight = cl.hasOption("e") ? Float.parseFloat(cl.getOptionValue("e")) : 0.0f;
 		int N = Integer.parseInt(cl.getOptionValue("N"));
@@ -72,9 +71,13 @@ public class CWGlobal {
 			option = Option.DIST_LOG;
 		} else if ("DIST_NOLOG".equals(cwOption)) {
 			option = Option.DIST_NOLOG;
-		} else {
+		} else if ("TOP".equals(cwOption)) {
 			option = Option.TOP;
+		} else {
+			System.err.println("Unknown cw option! Must be either \"TOP\", \"DIST_LOG\" or \"DIST_NOLOG\"");
+			return;
 		}
+		Reader inReader = new MonitoredFileReader(inFile);
 		findAndWriteClusters(inReader, writer, minEdgeWeight, N, new Random(), option);
 	}
 
