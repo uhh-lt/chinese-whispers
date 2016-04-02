@@ -27,20 +27,41 @@ import de.tudarmstadt.lt.util.MapUtil;
  * </code>
  */
 public class CW<N> {
+	public static enum Option {
+		/**
+		 * Take class with highest sum
+		 */
+		TOP,
+		/**
+		 * Weight class by node degree (number of edges to node)
+		 */
+		DIST_NOLOG,
+		/**
+		 * Weight class by log of node degree (number of edges to node)
+		 */
+		DIST_LOG,
+	}
+
 	// Copy of node list is used shuffling order of nodes
 	protected List<N> nodes;
 	protected Graph<N, Float> graph;
 	protected Map<N, N> nodeLabels;
 	protected boolean changeInPrevStep;
 	protected Map<N, Float> labelScores = new HashMap<N, Float>();
-	private Random random;
+	protected Random random;
+	private Option option;
 
 	public CW() {
 		this(new Random());
 	}
 
-	public CW(Random r) {
-		this.random = r;
+	public CW(Random random) {
+		this(random, Option.TOP);
+	}
+
+	public CW(Random random, Option option) {
+		this.random = random;
+		this.setOption(option);
 	}
 
 	protected void init(Graph<N, Float> graph) {
@@ -75,8 +96,28 @@ public class CW<N> {
 			if (edge == null) {
 				break;
 			}
-			N label = nodeLabels.get(edge.getSource());
-			MapUtil.addFloatTo(labelScores, label, edge.getWeight());
+			N sourceNode = edge.getSource();
+			N label = nodeLabels.get(sourceNode);
+			Float weight = edge.getWeight();
+			switch (getOption()) {
+			case DIST_LOG: {
+				float neighbours = count(graph.getNeighbors(sourceNode));
+				weight = (float) (weight / (Math.log(neighbours + 1)));
+				break;
+			}
+			case DIST_NOLOG: {
+				float neightbours = count(graph.getNeighbors(sourceNode));
+				weight = weight / neightbours;
+				break;
+			}
+			case TOP:
+				// nothing to do, use the weight of the edge
+				break;
+			default:
+				// same as top
+				break;
+			}
+			MapUtil.addFloatTo(labelScores, label, weight);
 		}
 		// isEmpty() check in case e.g. node has no neighbors at all
 		// (it will simply keep its own label then)
@@ -87,6 +128,15 @@ public class CW<N> {
 				changeInPrevStep = true;
 			}
 		}
+	}
+
+	private int count(Iterator<?> it) {
+		int count = 0;
+		while (it.hasNext()) {
+			count++;
+			it.next();
+		}
+		return count;
 	}
 
 	protected N getKeyWithMaxValue(Map<N, Float> map) {
@@ -136,5 +186,13 @@ public class CW<N> {
 		} while (changeInPrevStep);
 
 		return getClusters();
+	}
+
+	public Option getOption() {
+		return option;
+	}
+
+	public void setOption(Option option) {
+		this.option = option;
 	}
 }

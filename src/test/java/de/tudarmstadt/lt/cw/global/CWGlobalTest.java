@@ -13,6 +13,8 @@ import java.util.Random;
 
 import org.junit.Test;
 
+import de.tudarmstadt.lt.cw.CW.Option;
+
 public class CWGlobalTest {
 
 	private Random random = new Random(42);
@@ -24,7 +26,7 @@ public class CWGlobalTest {
 		float minEdgeWeight = 0.0f;
 		int N = 200;
 
-		CWGlobal.findAndWriteClusters(reader, new BufferedWriter(writer), minEdgeWeight, N, random);
+		CWGlobal.findAndWriteClusters(reader, new BufferedWriter(writer), minEdgeWeight, N, random, Option.TOP);
 		String result = writer.toString();
 
 		assertThat(numberOfClusters(result), is(1));
@@ -39,7 +41,7 @@ public class CWGlobalTest {
 		float minEdgeWeight = 0.0f;
 		int N = 200;
 
-		CWGlobal.findAndWriteClusters(reader, new BufferedWriter(writer), minEdgeWeight, N, random);
+		CWGlobal.findAndWriteClusters(reader, new BufferedWriter(writer), minEdgeWeight, N, random, Option.TOP);
 		String result = writer.toString();
 
 		assertThat(numberOfClusters(result), is(2));
@@ -56,13 +58,13 @@ public class CWGlobalTest {
 		int N = 200;
 
 		StringWriter writer1 = new StringWriter();
-		CWGlobal.findAndWriteClusters(reader, new BufferedWriter(writer1), minEdgeWeight, N, random);
+		CWGlobal.findAndWriteClusters(reader, new BufferedWriter(writer1), minEdgeWeight, N, random, Option.TOP);
 		String result1 = writer1.toString();
 
 		reader.reset();
 
 		StringWriter writer2 = new StringWriter();
-		CWGlobal.findAndWriteClusters(reader, new BufferedWriter(writer2), minEdgeWeight, N, random);
+		CWGlobal.findAndWriteClusters(reader, new BufferedWriter(writer2), minEdgeWeight, N, random, Option.TOP);
 		String result2 = writer2.toString();
 
 		assertThat(result1, is(result2));
