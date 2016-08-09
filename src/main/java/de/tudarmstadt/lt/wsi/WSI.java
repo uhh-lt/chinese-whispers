@@ -220,7 +220,7 @@ public class WSI {
 		WSI cwd = null;
 		if (cl.getOptionValue("clustering").toLowerCase().equals("cw")) {
 			cwd = new WSI(graphWrapper, n, ClusteringAlgorithm.ChineseWhispers);
-			String cwOption = cl.getOptionValue("cwOption");
+			String cwOption = cl.getOptionValue("cwOption", "TOP");
 			CW.Option option;
 			if ("DIST_LOG".equals(cwOption)) {
 				option = Option.DIST_LOG;
