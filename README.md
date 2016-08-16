@@ -1,6 +1,6 @@
 This is an implementation of the Chinese Whispers graph clustering algorithm. For an introduction
 or if you need to reference the algorithm, use this paper:
-http://wortschatz.uni-leipzig.de/~cbiemann/pub/2006/BiemannTextGraph06.pdf
+<http://wortschatz.uni-leipzig.de/~cbiemann/pub/2006/BiemannTextGraph06.pdf>.
 
 This project uses the CW algorithm specifically for Word Sense Induction (WSI).
 
@@ -16,7 +16,7 @@ Here's a quickstart guide:
 
 ```bash
 git clone https://github.com/tudarmstadt-lt/chinese-whispers.git
-cd chinese-whispers && mvn package shade:shade
+cd chinese-whispers && mvn package
 java -cp target/chinese-whispers.jar de.tudarmstadt.lt.wsi.WSI
 ```
 
@@ -25,10 +25,13 @@ You may also of course use the CW algorithm directly from your code.
 For an example of how to use the WSI algorithm, compile the code as shown above and download
 example data, like this word similarity graph extracted from a 120-million-lines English news
 corpus taken from the JoBimText project:
-http://sourceforge.net/projects/jobimtext/files/data/models/en_news120M_stanford_lemma/LMI_p1000_l200.gz
+<http://sourceforge.net/projects/jobimtext/files/data/models/en_news120M_stanford_lemma/LMI_p1000_l200.gz>.
 
 The data is formatted in _ABC_ format, meaning that each row contains an edge of the graph,
 and each row contains three columns separated by a whitespace: _from_, _to_, and the _edge weight_.
+The provided data should be sorted using, for instance, `sort -u`. Please note that for
+undirected graphs each edge should be provided with two rows: _from_, _to_, _weight_
+and _to_, _from_, _weight_.
 
 Then run the WSI algorithm on the data (making sure you assign enough memory to the VM):
 

@@ -4,18 +4,11 @@
 	<groupId>de.tudarmstadt.lt</groupId>
 	<artifactId>de.tudarmstadt.lt.chinese-whispers</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	
-	<repositories>
-	    <repository>
-	        <id>johannessimon-mvn-repo</id>
-	        <url>https://raw.github.com/johannessimon/mvn-repo/master</url>
-	        <snapshots>
-	            <enabled>true</enabled>
-	            <updatePolicy>always</updatePolicy>
-	        </snapshots>
-	    </repository>
-	</repositories>
-	
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
+
 	<dependencies>
 		<dependency>
 			<groupId>commons-io</groupId>
@@ -53,11 +46,12 @@
 			<version>1.2</version>
 		</dependency>
 		<dependency>
-			<groupId>de.tudarmstadt.lt</groupId>
-			<artifactId>de.tudarmstadt.lt.util</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			<version>1.2.17</version>
 		</dependency>
 	</dependencies>
+
 	<build>
     	<finalName>chinese-whispers</finalName>
 		<plugins>
@@ -70,23 +64,21 @@
 					<target>1.6</target>
 				</configuration>
 			</plugin>
-			
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-shade-plugin</artifactId>
 				<version>2.1</version>
 				<executions>
 					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>shade</goal>
+						</goals>
 						<configuration>
-							<!-- <minimizeJar>true</minimizeJar>-->
 							<filters>
 								<filter>
 									<artifact>*:*</artifact>
 									<excludes>
-										<!--
-										Remove upper-lowercase conflicts,
-										e.g. two files META-INF/license.txt and META-INF/LICENSE.TXT
-										-->
 										<exclude>LICENSE*</exclude>
 										<exclude>license*</exclude>
 										<exclude>META-INF/LICENSE*</exclude>
@@ -98,16 +90,6 @@
 					</execution>
 				</executions>
 			</plugin>
-			<plugin>
-				<artifactId>maven-deploy-plugin</artifactId>
-				<version>2.8.1</version>
-				<configuration>
-					<altDeploymentRepository>internal.repo::default::file:///Users/jsimon/git/mvn-repo</altDeploymentRepository>
-				</configuration>
-			</plugin>
 		</plugins>
 	</build>
-	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-	</properties>
 </project>
