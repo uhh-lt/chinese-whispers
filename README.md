@@ -1,6 +1,14 @@
+Chinese Whispers
+================
+
 This is an implementation of the Chinese Whispers graph clustering algorithm. For an introduction
 or if you need to reference the algorithm, use this paper:
 <http://wortschatz.uni-leipzig.de/~cbiemann/pub/2006/BiemannTextGraph06.pdf>.
+
+[![Build Status][travis_ci_badge]][travis_ci_link]
+
+[travis_ci_badge]: https://travis-ci.org/tudarmstadt-lt/chinese-whispers.svg
+[travis_ci_link]: https://travis-ci.org/tudarmstadt-lt/chinese-whispers
 
 This project uses the CW algorithm specifically for Word Sense Induction (WSI).
 
