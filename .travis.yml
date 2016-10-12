@@ -1,0 +1,11 @@
+sudo: false
+language: java
+jdk:
+- oraclejdk8
+- oraclejdk7
+- openjdk6
+before_script:
+- mvn versions:display-dependency-updates versions:display-plugin-updates
+cache:
+  directories:
+  - $HOME/.m2

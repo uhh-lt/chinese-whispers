@@ -11,8 +11,8 @@ import java.util.Locale;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.apache.commons.collections.IteratorUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.collections4.IteratorUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import de.tudarmstadt.lt.util.IndexUtil;
 import de.tudarmstadt.lt.util.IndexUtil.Index;
