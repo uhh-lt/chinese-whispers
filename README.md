@@ -7,11 +7,6 @@ This is an implementation of the Chinese Whispers (CW) graph clustering algorith
 or if you need to reference the algorithm, use this paper:
 <http://wortschatz.uni-leipzig.de/~cbiemann/pub/2006/BiemannTextGraph06.pdf>.
 
-[![Build Status][travis_ci_badge]][travis_ci_link]
-
-[travis_ci_badge]: https://travis-ci.org/tudarmstadt-lt/chinese-whispers.svg
-[travis_ci_link]: https://travis-ci.org/tudarmstadt-lt/chinese-whispers
-
 This project contains implementation of the CW algorithm. You can run it for each ego network of the graph (e.g. to perform word sense induction or for segmenting a social ego network) or perform global clustering of the graph. In the first case, you will obtain one clustering for each node, in the latter case you will obtain one set of clusters per graph. 
 
 ## Running from the command line
