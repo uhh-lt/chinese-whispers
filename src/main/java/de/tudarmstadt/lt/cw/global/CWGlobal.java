@@ -65,7 +65,7 @@ public class CWGlobal {
 		BufferedWriter writer = FileUtil.createWriter(outFile);
 		float minEdgeWeight = cl.hasOption("e") ? Float.parseFloat(cl.getOptionValue("e")) : 0.0f;
 		int N = Integer.parseInt(cl.getOptionValue("N"));
-		String cwOption = cl.getOptionValue("cwOption");
+		String cwOption = cl.getOptionValue("cwOption", "TOP");
 		CW.Option option;
 		if ("DIST_LOG".equals(cwOption)) {
 			option = Option.DIST_LOG;
