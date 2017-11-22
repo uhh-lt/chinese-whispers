@@ -77,8 +77,8 @@ You may use the CW algorithm directly from your code.
 * add the chinese-whispers dependency
 ```
 	<dependency>
-	    <groupId>com.github.tudarmstadt-lt</groupId>
-	    <artifactId>AB-Sentiment</artifactId>
+	    <groupId>com.github.uhh-lt</groupId>
+	    <artifactId>chinese-whispers</artifactId>
 	    <version>-SNAPSHOT</version>
 	</dependency>
 ```
