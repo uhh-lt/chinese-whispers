@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/tudarmstadt-lt/chinese-whispers.svg?branch=master)](https://travis-ci.org/tudarmstadt-lt/chinese-whispers) [![Release](https://jitpack.io/v/tudarmstadt-lt/chinese-whispers.svg)](https://jitpack.io/#tudarmstadt-lt/chinese-whispers)
+[![Build Status](https://travis-ci.org/uhh-lt/chinese-whispers.svg?branch=master)](https://travis-ci.org/uhh-lt/chinese-whispers) [![Release](https://jitpack.io/v/uhh-lt/chinese-whispers.svg)](https://jitpack.io/#uhh-lt/chinese-whispers)
 
 Chinese Whispers
 ================
@@ -77,8 +77,8 @@ You may use the CW algorithm directly from your code.
 * add the chinese-whispers dependency
 ```
 	<dependency>
-	    <groupId>com.github.tudarmstadt-lt</groupId>
-	    <artifactId>AB-Sentiment</artifactId>
+	    <groupId>com.github.uhh-lt</groupId>
+	    <artifactId>chinese-whispers</artifactId>
 	    <version>-SNAPSHOT</version>
 	</dependency>
 ```
