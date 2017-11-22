@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/tudarmstadt-lt/chinese-whispers.svg?branch=master)](https://travis-ci.org/tudarmstadt-lt/chinese-whispers) [![Release](https://jitpack.io/v/tudarmstadt-lt/chinese-whispers.svg)](https://jitpack.io/#tudarmstadt-lt/chinese-whispers)
+[![Build Status](https://travis-ci.org/uhh-lt/chinese-whispers.svg?branch=master)](https://travis-ci.org/uhh-lt/chinese-whispers) [![Release](https://jitpack.io/v/uhh-lt/chinese-whispers.svg)](https://jitpack.io/#uhh-lt/chinese-whispers)
 
 Chinese Whispers
 ================
